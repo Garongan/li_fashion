@@ -14,63 +14,63 @@ class _NavigationMenuState extends State<NavigationMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: <Widget>[
-        const FasionsList(),
+        const FasionList(),
         const WishList(),
       ][currentPageIndex],
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: Color.fromRGBO(29, 170, 171, 1),
-                width: 0.5,
-              ),
+        color: colorScheme.onSurface,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(width * 0.07),
+              topRight: Radius.circular(width * 0.07),
             ),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: Color.fromRGBO(29, 170, 171, 1),
-                offset: Offset(0, 1.5),
-                blurRadius: 4,
-              )
-            ]),
-        child: NavigationBar(
-          onDestinationSelected: (int index) {
-            setState(() {
-              currentPageIndex = index;
-            });
-          },labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          selectedIndex: currentPageIndex,
-          backgroundColor: Colors.white,
-          indicatorColor: Colors.transparent,
-          destinations: const <Widget>[
-            NavigationDestination(
-              selectedIcon: Icon(
-                Icons.home,
-                size: 30,
-                color: Color.fromRGBO(29, 170, 171, 1),
+            color: colorScheme.primary,
+          ),
+          child: NavigationBar(
+            onDestinationSelected: (int index) {
+              setState(() {
+                currentPageIndex = index;
+              });
+            },
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+            selectedIndex: currentPageIndex,
+            backgroundColor: Colors.transparent,
+            indicatorColor: Colors.transparent,
+            destinations: <Widget>[
+              NavigationDestination(
+                selectedIcon: Icon(
+                  Icons.home_outlined,
+                  size: 30,
+                  color: colorScheme.onSurface,
+                ),
+                icon: Icon(
+                  Icons.home_outlined,
+                  size: 30,
+                  color: colorScheme.secondary,
+                ),
+                label: 'Home',
               ),
-              icon: Icon(
-                Icons.home_outlined,
-                size: 30,
-                color: Color.fromRGBO(29, 170, 171, 1),
+              NavigationDestination(
+                selectedIcon: Icon(
+                  Icons.favorite_outline,
+                  size: 30,
+                  color: colorScheme.onSurface,
+                ),
+                icon: Icon(
+                  Icons.favorite_outline,
+                  size: 30,
+                  color: colorScheme.secondary,
+                ),
+                label: 'Favourite',
               ),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              selectedIcon: Icon(
-                Icons.favorite,
-                size: 30,
-                color: Color.fromRGBO(29, 170, 171, 1),
-              ),
-              icon: Icon(
-                Icons.favorite_outline_outlined,
-                size: 30,
-                color: Color.fromRGBO(29, 170, 171, 1),
-              ),
-              label: 'Favourite',
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
