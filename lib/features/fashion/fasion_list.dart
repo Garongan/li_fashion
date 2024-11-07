@@ -11,10 +11,10 @@ class FasionList extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Fashion List'),
       ),
-      body: Container(
-        color: colorScheme.onSurface,
-        child: Center(
-          child: SafeArea(
+      body: SafeArea(
+        child: Container(
+          color: colorScheme.onSurface,
+          child: Center(
             child: Text(
               MediaQuery.platformBrightnessOf(context).name,
               textAlign: TextAlign.center,

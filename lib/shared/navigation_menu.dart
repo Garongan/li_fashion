@@ -15,6 +15,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final bool isDarkMode = MediaQuery.platformBrightnessOf(context).name == 'dark' ? true : false;
     final double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -38,6 +39,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 currentPageIndex = index;
               });
             },
+            height: 80,
             labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
             selectedIndex: currentPageIndex,
             backgroundColor: Colors.transparent,
@@ -47,12 +49,12 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 selectedIcon: Icon(
                   Icons.home_outlined,
                   size: 30,
-                  color: colorScheme.onSurface,
+                  color: isDarkMode ? colorScheme.surface : colorScheme.onSurface,
                 ),
                 icon: Icon(
                   Icons.home_outlined,
                   size: 30,
-                  color: colorScheme.secondary,
+                  color: colorScheme.secondary.withAlpha(150),
                 ),
                 label: 'Home',
               ),
@@ -60,12 +62,12 @@ class _NavigationMenuState extends State<NavigationMenu> {
                 selectedIcon: Icon(
                   Icons.favorite_outline,
                   size: 30,
-                  color: colorScheme.onSurface,
+                  color: isDarkMode ? colorScheme.surface : colorScheme.onSurface,
                 ),
                 icon: Icon(
                   Icons.favorite_outline,
                   size: 30,
-                  color: colorScheme.secondary,
+                  color: colorScheme.secondary.withAlpha(150),
                 ),
                 label: 'Favourite',
               ),
