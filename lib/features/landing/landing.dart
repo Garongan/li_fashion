@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/shared/navigation_menu.dart';
+import 'package:li_fashion/features/fashion/fashion_list.dart';
 
 class Landing extends StatelessWidget {
   const Landing({super.key});
@@ -9,6 +9,7 @@ class Landing extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final double width = MediaQuery.of(context).size.width;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
+    final double aspectRatio = MediaQuery.of(context).size.aspectRatio;
 
     return Scaffold(
       backgroundColor: colorScheme.onSurface,
@@ -20,28 +21,26 @@ class Landing extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: <Widget>[
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(width * 0.07),
-                        bottomRight: Radius.circular(width * 0.07),
-                      ),
-                      child: Image.asset(
-                        'assets/images/landing.jpg',
-                        fit: BoxFit.cover,
-                        width: width,
-                        height: double.infinity,
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(width * 0.07),
+                      bottomRight: Radius.circular(width * 0.07),
+                    ),
+                    child: Image.asset(
+                      'assets/images/landing.jpg',
+                      fit: BoxFit.cover,
+                      width: width,
+                      height: double.infinity,
                     ),
                   ),
-                  SafeArea(
+                  const SafeArea(
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: Text(
                         'Li Fashion',
                         style: TextStyle(
-                          color: colorScheme.surface,
-                          fontSize: 32,
+                          color: Color(0xfffefff3),
+                          fontSize: 24,
                         ),
                       ),
                     ),
@@ -64,7 +63,7 @@ class Landing extends StatelessWidget {
                 child: Text(
                   'COLLECTIO',
                   style: TextStyle(
-                    fontSize: width * 0.22,
+                    fontSize: width * aspectRatio * 0.45,
                     fontWeight: FontWeight.bold,
                   ),
                   softWrap: false,
@@ -75,33 +74,31 @@ class Landing extends StatelessWidget {
             const SizedBox(
               height: 5,
             ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(width * 0.07),
-                  topRight: Radius.circular(width * 0.07),
+            Padding(
+              padding: EdgeInsets.only(bottom: bottomPadding,),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(width * 0.07),
+                  color: colorScheme.secondary,
                 ),
-                color: colorScheme.secondary,
-              ),
-              padding: EdgeInsets.only(bottom: bottomPadding),
-              width: width,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NavigationMenu(),
-                    ),
-                  );
-                },
-                child: SizedBox(
-                  height: 80,
+                height: bottomPadding + 80,
+                padding: EdgeInsets.only(bottom: bottomPadding),
+                width: width,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FashionList(),
+                      ),
+                    );
+                  },
                   child: Center(
                     child: Text(
                       'Discover Now',
                       style: TextStyle(
                         color: colorScheme.onSurface,
-                        fontSize: 20,
+                        fontSize: 24,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
