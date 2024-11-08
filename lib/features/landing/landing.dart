@@ -40,7 +40,9 @@ class Landing extends StatelessWidget {
                         'Li Fashion',
                         style: TextStyle(
                           color: Color(0xfffefff3),
-                          fontSize: 24,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.15,
                         ),
                       ),
                     ),
@@ -56,7 +58,7 @@ class Landing extends StatelessWidget {
                 borderRadius: BorderRadius.circular(width * 0.07),
                 color: colorScheme.primary,
               ),
-              height: bottomPadding + 100,
+              padding: const EdgeInsets.symmetric(vertical: 10),
               width: width,
               child: FittedBox(
                 fit: BoxFit.none,
@@ -75,14 +77,14 @@ class Landing extends StatelessWidget {
               height: 5,
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: bottomPadding,),
+              padding: EdgeInsets.only(
+                bottom: bottomPadding,
+              ),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(width * 0.07),
                   color: colorScheme.secondary,
                 ),
-                height: bottomPadding + 80,
-                padding: EdgeInsets.only(bottom: bottomPadding),
                 width: width,
                 child: TextButton(
                   onPressed: () {
@@ -93,13 +95,12 @@ class Landing extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Center(
-                    child: Text(
-                      'Discover Now',
-                      style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Center(
+                      child: Text(
+                        'Discover Now',
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ),
                   ),

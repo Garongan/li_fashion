@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/features/wish/wish_list.dart';
 
 class FashionList extends StatelessWidget {
@@ -34,11 +35,9 @@ class FashionList extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  const Text(
+                  Text(
                     'Li Fashion',
-                    style: TextStyle(
-                      fontSize: 24,
-                    ),
+                    style: Theme.of(context).textTheme.displaySmall,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -55,11 +54,7 @@ class FashionList extends StatelessWidget {
                           ),
                         );
                       },
-                      icon: const Icon(
-                        Icons.favorite_outline,
-                        size: 30,
-                      ),
-                      color: const Color(0xff000000),
+                      icon: const Icon(Icons.favorite_outline_outlined),
                     ),
                   ),
                 ],
@@ -76,15 +71,12 @@ class FashionList extends StatelessWidget {
                 child: TextField(
                   cursorColor: colorScheme.onSurface,
                   decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Search your needs',
-                      hintStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        size: 30,
-                      )),
+                    hintText: 'Search your needs',
+                    prefixIcon: IconTheme(
+                      data: customIconThemeData,
+                      child: Icon(Icons.search_outlined),
+                    ),
+                  ),
                 ),
               )
             ],
