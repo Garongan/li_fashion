@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/features/landing/landing.dart';
 
-Future main() async {
+void main() async {
   await dotenv.load(fileName: '.env');
   runApp(
     DevicePreview(

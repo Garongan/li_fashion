@@ -16,6 +16,7 @@ class _FashionListState extends State<FashionList> {
   final _api = GoogleSheetsApi();
 
   List<List<dynamic>> _data = [];
+  List<List<dynamic>> _category = [];
 
   @override
   void initState() {
@@ -26,8 +27,10 @@ class _FashionListState extends State<FashionList> {
   Future<void> _fetchData() async {
     try {
       final data = await _api.getSpreadsheetData('Sheet1');
+      final category = await _api.getSpreadsheetData('Sheet2');
       setState(() {
         _data = data.skip(1).toList();
+        _category = category.skip(1).toList();
       });
     } catch (e) {
       log('Error fetching data: $e');
@@ -141,29 +144,82 @@ class _FashionListState extends State<FashionList> {
             margin: EdgeInsets.only(
               bottom: bottomPadding,
             ),
-            child: _data.isEmpty
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: colorScheme.onSurface,
-                    ),
-                  )
-                : ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      vertical: xPadding,
-                    ),
-                    itemCount: _data.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: xPadding,
+            padding: EdgeInsets.only(
+              top: xPadding,
+            ),
+            child: Expanded(
+              child: _data.isEmpty
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: colorScheme.onSurface,
+                      ),
+                    )
+                  : Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: width - (xPadding * 2),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Wrap(
+                              direction: Axis.horizontal,
+                              spacing: 5,
+                              children: List.generate(
+                                _category.length,
+                                (index) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(width * 0.07),
+                                      color: colorScheme.surface,
+                                      border: Border.all(
+                                        width: 1,
+                                        color:
+                                            colorScheme.onSurface.withAlpha(50),
+                                      ),
+                                    ),
+                                    child: TextButton(
+                                      onPressed: () {},
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(7),
+                                        child: Text(
+                                          _category[index].join(''),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         ),
-                        title: Text(
-                          _data[index].join('|'),
-                          textAlign: TextAlign.justify,
+                        const SizedBox(
+                          height: 5,
                         ),
-                      );
-                    },
-                  ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 7),
+                            child: ListView.builder(
+                              itemCount: _data.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: xPadding,
+                                  ),
+                                  title: Text(
+                                    _data[index].join('|'),
+                                    textAlign: TextAlign.justify,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ]),
