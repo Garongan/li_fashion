@@ -6,7 +6,7 @@ import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/features/landing/landing.dart';
 
 void main() async {
-  await dotenv.load(fileName: '.env');
+  await dotenv.load();
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,

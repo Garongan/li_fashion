@@ -1,8 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:li_fashion/core/google_sheets_api.dart';
 import 'package:li_fashion/core/theme.dart';
+import 'package:li_fashion/features/fashion/fashion.dart';
+import 'package:li_fashion/features/fashion/fashion_details.dart';
 import 'package:li_fashion/features/favourite/favourite_list.dart';
 
 class FashionList extends StatefulWidget {
@@ -14,22 +17,23 @@ class FashionList extends StatefulWidget {
 
 class _FashionListState extends State<FashionList> {
   final _api = GoogleSheetsApi();
+  bool toggleFavourite = false;
 
-  List<List<dynamic>> _data = [];
+  late Future<List<Fashion>> _futureFasion;
+
   List<List<dynamic>> _category = [];
 
   @override
   void initState() {
     super.initState();
     _fetchData();
+    _futureFasion = _api.getFashionData();
   }
 
   Future<void> _fetchData() async {
     try {
-      final data = await _api.getSpreadsheetData('Sheet1');
       final category = await _api.getSpreadsheetData('Sheet2');
       setState(() {
-        _data = data.skip(1).toList();
         _category = category.skip(1).toList();
       });
     } catch (e) {
@@ -103,14 +107,14 @@ class _FashionListState extends State<FashionList> {
                       },
                       icon: const Padding(
                         padding: EdgeInsets.all(7),
-                        child: Icon(Icons.favorite_outline_outlined),
+                        child: Icon(Icons.bookmarks_outlined),
                       ),
                     ),
                   ),
                 ],
               ),
               SizedBox(
-                height: topPadding / 2,
+                height: xPadding,
               ),
               Container(
                 decoration: BoxDecoration(
@@ -144,17 +148,27 @@ class _FashionListState extends State<FashionList> {
             margin: EdgeInsets.only(
               bottom: bottomPadding,
             ),
-            padding: EdgeInsets.only(
-              top: xPadding,
-            ),
+            padding: EdgeInsets.all(xPadding),
             child: Expanded(
-              child: _data.isEmpty
-                  ? Center(
+              child: FutureBuilder(
+                future: _futureFasion,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
                       child: CircularProgressIndicator(
                         color: colorScheme.onSurface,
                       ),
-                    )
-                  : Column(
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Center(
+                      child: Text('Failed to fetch data'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text('No data avaible'),
+                    );
+                  } else {
+                    return Column(
                       children: <Widget>[
                         SizedBox(
                           width: width - (xPadding * 2),
@@ -162,7 +176,7 @@ class _FashionListState extends State<FashionList> {
                             scrollDirection: Axis.horizontal,
                             child: Wrap(
                               direction: Axis.horizontal,
-                              spacing: 5,
+                              spacing: xPadding,
                               children: List.generate(
                                 _category.length,
                                 (index) {
@@ -195,30 +209,90 @@ class _FashionListState extends State<FashionList> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 5,
+                        SizedBox(
+                          height: xPadding,
                         ),
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 7),
-                            child: ListView.builder(
-                              itemCount: _data.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: xPadding,
-                                  ),
-                                  title: Text(
-                                    _data[index].join('|'),
-                                    textAlign: TextAlign.justify,
-                                  ),
-                                );
-                              },
-                            ),
+                          child: MasonryGridView.count(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(0),
+                            crossAxisCount: 2,
+                            itemCount: snapshot.data!.length,
+                            mainAxisSpacing: xPadding,
+                            crossAxisSpacing: xPadding,
+                            itemBuilder: (context, index) {
+                              final Fashion fashion = snapshot.data![index];
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FashionDetails(
+                                        name: fashion.name,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Stack(
+                                      children: <Widget>[
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                              width * 0.07),
+                                          child: AspectRatio(
+                                            aspectRatio: 0.9,
+                                            child: Image.network(
+                                              fashion.mainImage,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 5,
+                                          right: 5,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: colorScheme.primary,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  toggleFavourite =
+                                                      !toggleFavourite;
+                                                });
+                                              },
+                                              icon: Icon(
+                                                toggleFavourite
+                                                    ? Icons
+                                                        .favorite_outline_outlined
+                                                    : Icons.favorite_outlined,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: xPadding,
+                                      ),
+                                      child: Text(fashion.name),
+                                    ),
+                                    Text(fashion.price),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
-                    ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ),
