@@ -63,9 +63,9 @@ class Landing extends StatelessWidget {
               child: FittedBox(
                 fit: BoxFit.none,
                 child: Text(
-                  'COLLECTIO',
+                  'COLLECTION',
                   style: TextStyle(
-                    fontSize: width * aspectRatio * 0.45,
+                    fontSize: width * aspectRatio * 0.4,
                     fontWeight: FontWeight.bold,
                   ),
                   softWrap: false,
@@ -106,6 +106,9 @@ class Landing extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 5,
             )
           ],
         ),

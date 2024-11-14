@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:li_fashion/core/theme.dart';
+import 'package:li_fashion/features/fashion/components/custom_app_bar.dart';
 
 class FavouriteList extends StatelessWidget {
   const FavouriteList({super.key});
@@ -31,33 +32,10 @@ class FavouriteList extends StatelessWidget {
             ),
             child: Column(
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Padding(
-                          padding: EdgeInsets.all(7),
-                          child: Icon(Icons.arrow_back_outlined),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'Li Fashion',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    ),
-                    const SizedBox(
-                      width: 60,
-                    )
-                  ],
+                const CustomAppBar(
+                  action: SizedBox(
+                    width: 60,
+                  ),
                 ),
                 SizedBox(
                   height: topPadding / 2,

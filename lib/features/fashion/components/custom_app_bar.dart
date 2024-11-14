@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:li_fashion/features/favourite/favourite_list.dart';
 
 class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({super.key});
+  final Widget? action;
+  const CustomAppBar({super.key, this.action});
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -31,26 +32,28 @@ class CustomAppBar extends StatelessWidget {
           'Li Fashion',
           style: Theme.of(context).textTheme.displaySmall,
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: colorScheme.primary,
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FavouriteList(),
+        action == null
+            ? Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  shape: BoxShape.circle,
                 ),
-              );
-            },
-            icon: const Padding(
-              padding: EdgeInsets.all(7),
-              child: Icon(Icons.bookmarks_outlined),
-            ),
-          ),
-        ),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FavouriteList(),
+                      ),
+                    );
+                  },
+                  icon: const Padding(
+                    padding: EdgeInsets.all(7),
+                    child: Icon(Icons.bookmarks_outlined),
+                  ),
+                ),
+              )
+            : action!,
       ],
     );
   }

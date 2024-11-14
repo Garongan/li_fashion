@@ -35,17 +35,17 @@ const TextTheme customTextTheme = TextTheme(
   ),
   titleLarge: TextStyle(
     fontSize: 22,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.bold,
     letterSpacing: 0.0,
   ),
   titleMedium: TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.bold,
     letterSpacing: 0.1,
   ),
   titleSmall: TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.bold,
     letterSpacing: 0.1,
   ),
   bodyLarge: TextStyle(
