@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/features/fashion/components/custom_app_bar.dart';
 
-class FavouriteList extends StatelessWidget {
-  const FavouriteList({super.key});
+class FavoriteList extends StatelessWidget {
+  const FavoriteList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class FavouriteList extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(
-              top: topPadding,
+              top: topPadding + xPadding,
               left: xPadding,
               right: xPadding,
               bottom: topPadding / 2,
@@ -36,6 +36,7 @@ class FavouriteList extends StatelessWidget {
                   action: SizedBox(
                     width: 60,
                   ),
+                  title: 'Favorites',
                 ),
                 SizedBox(
                   height: topPadding / 2,
@@ -50,6 +51,7 @@ class FavouriteList extends StatelessWidget {
                     cursorColor: colorScheme.onSurface,
                     decoration: const InputDecoration(
                       hintText: 'Search your favourite',
+                      contentPadding: EdgeInsets.symmetric(vertical: 16),
                       prefixIcon: IconTheme(
                         data: customIconThemeData,
                         child: Icon(Icons.search_outlined),

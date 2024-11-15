@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/features/favourite/favourite_list.dart';
+import 'package:li_fashion/features/favorite/favorite_list.dart';
 
 class CustomAppBar extends StatelessWidget {
   final Widget? action;
-  const CustomAppBar({super.key, this.action});
+  final String? title;
+  const CustomAppBar({super.key, this.action, this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class CustomAppBar extends StatelessWidget {
           ),
         ),
         Text(
-          'Li Fashion',
+          title == null ? 'Li Fashion' : title!,
           style: Theme.of(context).textTheme.displaySmall,
         ),
         action == null
@@ -43,7 +44,7 @@ class CustomAppBar extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const FavouriteList(),
+                        builder: (context) => const FavoriteList(),
                       ),
                     );
                   },

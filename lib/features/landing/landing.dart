@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:li_fashion/features/fashion/fashion_list.dart';
+import 'package:marquee/marquee.dart';
 
 class Landing extends StatelessWidget {
   const Landing({super.key});
@@ -58,19 +59,25 @@ class Landing extends StatelessWidget {
                 borderRadius: BorderRadius.circular(width * 0.07),
                 color: colorScheme.primary,
               ),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              width: width,
-              child: FittedBox(
-                fit: BoxFit.none,
-                child: Text(
-                  'COLLECTION',
-                  style: TextStyle(
-                    fontSize: width * aspectRatio * 0.4,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  softWrap: false,
-                  overflow: TextOverflow.visible,
+              alignment: Alignment.topCenter,
+              height: width * aspectRatio * 0.6,
+              child: Marquee(
+                text: 'TRENDY COLLECTION',
+                style: TextStyle(
+                  fontSize: width * aspectRatio * 0.4,
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.2,
                 ),
+                scrollAxis: Axis.horizontal,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                blankSpace: 20.0,
+                velocity: 50.0,
+                startPadding: 10.0,
+                accelerationDuration: const Duration(seconds: 1),
+                accelerationCurve: Curves.linear,
+                decelerationDuration: const Duration(milliseconds: 500),
+                decelerationCurve: Curves.easeOut,
               ),
             ),
             const SizedBox(
@@ -85,7 +92,6 @@ class Landing extends StatelessWidget {
                   borderRadius: BorderRadius.circular(width * 0.07),
                   color: colorScheme.secondary,
                 ),
-                width: width,
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -109,7 +115,7 @@ class Landing extends StatelessWidget {
             ),
             const SizedBox(
               height: 5,
-            )
+            ),
           ],
         ),
       ),

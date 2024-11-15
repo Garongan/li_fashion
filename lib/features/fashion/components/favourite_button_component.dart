@@ -3,7 +3,9 @@ import 'package:li_fashion/features/fashion/fashion_service.dart';
 
 class FavouriteButtonComponent extends StatefulWidget {
   final String id;
-  const FavouriteButtonComponent({super.key, required this.id});
+  final double padding;
+  final Color? background;
+  const FavouriteButtonComponent({super.key, required this.id, required this.padding, this.background});
 
   @override
   State<FavouriteButtonComponent> createState() =>
@@ -48,13 +50,16 @@ class _FavouriteButtonComponentState extends State<FavouriteButtonComponent> {
 
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.primary,
+        color: widget.background == null ? colorScheme.outline : widget.background!,
         shape: BoxShape.circle,
       ),
       child: IconButton(
         onPressed: _toggleLoved,
-        icon: Icon(
-          isFavorite ? Icons.favorite : Icons.favorite_outline,
+        icon: Padding(
+          padding: EdgeInsets.all(widget.padding),
+          child: Icon(
+            isFavorite ? Icons.favorite : Icons.favorite_outline,
+          ),
         ),
       ),
     );

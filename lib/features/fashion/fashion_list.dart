@@ -135,8 +135,8 @@ class _FashionListState extends State<FashionList> {
                               padding: const EdgeInsets.all(0),
                               crossAxisCount: 2,
                               itemCount: snapshot.data!.length,
-                              mainAxisSpacing: xPadding,
-                              crossAxisSpacing: xPadding,
+                              mainAxisSpacing: xPadding - 3,
+                              crossAxisSpacing: xPadding - 2,
                               itemBuilder: (context, index) {
                                 final Fashion fashion = snapshot.data![index];
                                 final id = '${fashion.name}_${fashion.price}';
@@ -155,7 +155,11 @@ class _FashionListState extends State<FashionList> {
                                     ),
                                     color: colorScheme.surface,
                                   ),
-                                  margin: const EdgeInsets.all(1),
+                                  margin: const EdgeInsets.only(
+                                    left: 1,
+                                    right: 1,
+                                    bottom: 3,
+                                  ),
                                   child: InkWell(
                                     onTap: () async {
                                       await Navigator.push(
@@ -194,10 +198,11 @@ class _FashionListState extends State<FashionList> {
                                               ),
                                             ),
                                             Positioned(
-                                              top: 5,
-                                              right: 5,
+                                              top: 7,
+                                              right: 7,
                                               child: FavouriteButtonComponent(
                                                 id: id,
+                                                padding: 0,
                                               ),
                                             ),
                                           ],
