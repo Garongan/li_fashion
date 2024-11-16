@@ -25,7 +25,9 @@ class CustomAppBar extends StatelessWidget {
             },
             icon: const Padding(
               padding: EdgeInsets.all(7),
-              child: Icon(Icons.arrow_back_outlined),
+              child: Icon(
+                Icons.arrow_back_outlined,
+              ),
             ),
           ),
         ),
@@ -50,7 +52,9 @@ class CustomAppBar extends StatelessWidget {
                   },
                   icon: const Padding(
                     padding: EdgeInsets.all(7),
-                    child: Icon(Icons.bookmarks_outlined),
+                    child: Icon(
+                      Icons.bookmarks_outlined,
+                    ),
                   ),
                 ),
               )

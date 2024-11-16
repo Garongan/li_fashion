@@ -17,6 +17,27 @@ class FashionDetails extends StatefulWidget {
 }
 
 class _FashionDetailsState extends State<FashionDetails> {
+  String _activeImage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _activeImage = widget.fashion.image[0];
+  }
+
+  void _changeMainImage(String url) {
+    setState(() {
+      _activeImage = url;
+    });
+  }
+
+  Color? _checkIfMainImage(String url) {
+    if (_activeImage == url) {
+      return Colors.black.withAlpha(100);
+    }
+    return null;
+  }
+
   Future<void> _openShopee(String link) async {
     final url = Uri.parse(link);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -72,45 +93,42 @@ class _FashionDetailsState extends State<FashionDetails> {
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(width * 0.07),
             ),
-            child: SizedBox(
-              height: 500,
-              child: Stack(children: <Widget>[
+            height: 500,
+            child: Stack(
+              children: <Widget>[
                 CustomImageComponent(
-                  image: widget.fashion.image[0],
+                  image: _activeImage,
                   isDetail: true,
-                  width: double.infinity,
+                  height: 500,
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: EdgeInsets.all(xPadding),
-                    child: Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(widget.fashion.image.length, (index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 2,
-                                  color: colorScheme.onSurface,
-                                ),
-                                borderRadius:
-                                    BorderRadius.circular(width * 0.07)),
+                Padding(
+                  padding: EdgeInsets.all(xPadding),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(
+                        widget.fashion.image.length,
+                        (index) {
+                          String imageUrl = widget.fashion.image[index];
+                          return InkWell(
+                            onTap: () => _changeMainImage(imageUrl),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(width * 0.07),
                               child: Image.network(
-                                widget.fashion.image[index],
-                                height: 85,
+                                imageUrl,
+                                height: 80,
+                                color: _checkIfMainImage(imageUrl),
+                                colorBlendMode: BlendMode.darken,
                               ),
                             ),
                           );
-                        }),
+                        },
                       ),
                     ),
                   ),
                 )
-              ]),
+              ],
             ),
           ),
           const SizedBox(

@@ -111,7 +111,7 @@ class CustomFashionGridVew extends StatelessWidget {
                                       CustomImageComponent(
                                         image: fashion.image[0],
                                         isDetail: false,
-                                        width: double.infinity,
+                                        height: 200,
                                       ),
                                       Positioned(
                                         top: 7,

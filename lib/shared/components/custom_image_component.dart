@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 class CustomImageComponent extends StatelessWidget {
   final String image;
   final bool isDetail;
-  final double width;
-  const CustomImageComponent(
-      {super.key,
-      required this.image,
-      required this.isDetail,
-      required this.width});
+  final double height;
+  const CustomImageComponent({
+    super.key,
+    required this.image,
+    required this.isDetail,
+    required this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +22,10 @@ class CustomImageComponent extends StatelessWidget {
               topLeft: Radius.circular(width * 0.07),
               topRight: Radius.circular(width * 0.07),
             ),
-      child: AspectRatio(
-        aspectRatio: 0.9,
-        child: Image.network(
-          image,
-          fit: BoxFit.cover,
-          width: width,
-        ),
+      child: Image.network(
+        image,
+        fit: BoxFit.cover,
+        height: height,
       ),
     );
   }
