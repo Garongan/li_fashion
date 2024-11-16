@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:li_fashion/core/google_sheets_api.dart';
 import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/features/fashion/components/custom_app_bar.dart';
+import 'package:li_fashion/features/fashion/fashion.dart';
+import 'package:li_fashion/shared/components/custom_fashion_grid_vew.dart';
 
-class FavoriteList extends StatelessWidget {
+class FavoriteList extends StatefulWidget {
   const FavoriteList({super.key});
+
+  @override
+  State<FavoriteList> createState() => _FavoriteListState();
+}
+
+class _FavoriteListState extends State<FavoriteList> {
+  final _api = GoogleSheetsApi();
+
+  late Future<List<Fashion>> _futureFasion;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureFasion = _api.getFashionData();
+  }
+
+  Future<void> _pullRefresh() async {
+    setState(() {
+      _futureFasion = _api.getFashionData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,18 +86,12 @@ class FavoriteList extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
-            child: Center(
-              child: Text(
-                MediaQuery.platformBrightnessOf(context).name,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.surface,
-                ),
-              ),
-            ),
+          const SizedBox(
+            height: 5,
+          ),
+          CustomFashionGridVew(
+            pullRefresh: _pullRefresh,
+            futureFasion: _futureFasion,
           ),
         ],
       ),

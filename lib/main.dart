@@ -7,13 +7,13 @@ import 'package:li_fashion/features/landing/landing.dart';
 
 void main() async {
   await dotenv.load();
-  // runApp(
-  //   DevicePreview(
-  //     enabled: !kReleaseMode,
-  //     builder: (context) => const MyApp(),
-  //   ),
-  // );
-  runApp(const MyApp());
+  runApp(
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => const MyApp(),
+    ),
+  );
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:li_fashion/features/fashion/fashion_list.dart';
+import 'package:li_fashion/shared/components/custom_button_component.dart';
 import 'package:marquee/marquee.dart';
 
 class Landing extends StatelessWidget {
@@ -9,8 +10,9 @@ class Landing extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final double width = MediaQuery.of(context).size.width;
+    final double topPadding = MediaQuery.of(context).padding.top;
+    final double xPadding = MediaQuery.of(context).size.width * 0.03;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
-    final double aspectRatio = MediaQuery.of(context).size.aspectRatio;
 
     return Scaffold(
       backgroundColor: colorScheme.onSurface,
@@ -31,11 +33,11 @@ class Landing extends StatelessWidget {
                       'assets/images/landing.jpg',
                       fit: BoxFit.cover,
                       width: width,
-                      height: double.infinity,
                     ),
                   ),
-                  const SafeArea(
-                    child: Align(
+                  Padding(
+                    padding: EdgeInsets.only(top: topPadding + xPadding),
+                    child: const Align(
                       alignment: Alignment.topCenter,
                       child: Text(
                         'Li Fashion',
@@ -60,11 +62,11 @@ class Landing extends StatelessWidget {
                 color: colorScheme.primary,
               ),
               alignment: Alignment.topCenter,
-              height: width * aspectRatio * 0.6,
+              height: 100,
               child: Marquee(
                 text: 'TRENDY COLLECTION',
                 style: TextStyle(
-                  fontSize: width * aspectRatio * 0.4,
+                  fontSize: 60,
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.2,
@@ -83,35 +85,19 @@ class Landing extends StatelessWidget {
             const SizedBox(
               height: 5,
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                bottom: bottomPadding,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(width * 0.07),
-                  color: colorScheme.secondary,
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FashionList(),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Center(
-                      child: Text(
-                        'Discover Now',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ),
+            CustomButtonComponent(
+              bottomPadding: bottomPadding,
+              text: 'Discover Now',
+              foregroundColor: colorScheme.onSurface,
+              backgroundColor: colorScheme.secondary,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FashionList(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(
               height: 5,
