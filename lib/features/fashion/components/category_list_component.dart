@@ -4,8 +4,13 @@ import 'package:li_fashion/core/google_sheets_api.dart';
 class CategoryListComponent extends StatefulWidget {
   final double width;
   final double xPadding;
-  const CategoryListComponent(
-      {super.key, required this.width, required this.xPadding});
+  final Function(String) updateActiveCategory;
+  const CategoryListComponent({
+    super.key,
+    required this.width,
+    required this.xPadding,
+    required this.updateActiveCategory,
+  });
 
   @override
   State<CategoryListComponent> createState() => _CategoryListComponentState();
@@ -14,6 +19,7 @@ class CategoryListComponent extends StatefulWidget {
 class _CategoryListComponentState extends State<CategoryListComponent> {
   final _api = GoogleSheetsApi();
   List<List<dynamic>> _category = [];
+  String _currentCategory = '';
 
   @override
   void initState() {
@@ -26,10 +32,25 @@ class _CategoryListComponentState extends State<CategoryListComponent> {
       final category = await _api.getSpreadsheetData('Sheet2');
       setState(() {
         _category = category.skip(1).toList();
+        _currentCategory = _category[0].join('');
       });
     } catch (e) {
       throw Exception(e);
     }
+  }
+
+  bool _checkActiveCategory(String category) {
+    if (_currentCategory == category) {
+      return true;
+    }
+    return false;
+  }
+
+  void _changeCategory(String category) {
+    setState(() {
+      _currentCategory = category;
+    });
+    widget.updateActiveCategory(_currentCategory);
   }
 
   @override
@@ -49,19 +70,28 @@ class _CategoryListComponentState extends State<CategoryListComponent> {
               return Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(widget.width * 0.07),
-                  color: colorScheme.surface,
+                  color: _checkActiveCategory(_category[index].join(''))
+                      ? colorScheme.onSurface
+                      : colorScheme.surface,
                   border: Border.all(
                     width: 1,
                     color: colorScheme.onSurface.withAlpha(50),
                   ),
                 ),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () => _changeCategory(_category[index].join('')),
                   child: Padding(
                     padding: const EdgeInsets.all(7),
                     child: Text(
                       _category[index].join(''),
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        letterSpacing: 0.15,
+                        color: _checkActiveCategory(_category[index].join(''))
+                            ? colorScheme.surface
+                            : colorScheme.onSurface,
+                      ),
                     ),
                   ),
                 ),

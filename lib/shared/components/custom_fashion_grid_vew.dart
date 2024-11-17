@@ -6,11 +6,33 @@ import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/features/fashion/fashion_details.dart';
 import 'package:li_fashion/shared/components/custom_image_component.dart';
 
-class CustomFashionGridVew extends StatelessWidget {
+class CustomFashionGridVew extends StatefulWidget {
   final Future<List<Fashion>> futureFasion;
   final RefreshCallback pullRefresh;
-  const CustomFashionGridVew(
-      {super.key, required this.pullRefresh, required this.futureFasion});
+  const CustomFashionGridVew({
+    super.key,
+    required this.pullRefresh,
+    required this.futureFasion,
+  });
+
+  @override
+  State<CustomFashionGridVew> createState() => _CustomFashionGridVewState();
+}
+
+class _CustomFashionGridVewState extends State<CustomFashionGridVew> {
+  String _activeCategory = '';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _updateActiveCategory(String category) {
+    setState(() {
+      _activeCategory = category;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +52,10 @@ class CustomFashionGridVew extends StatelessWidget {
         ),
         padding: EdgeInsets.all(xPadding),
         child: RefreshIndicator(
-          onRefresh: pullRefresh,
+          onRefresh: widget.pullRefresh,
           color: colorScheme.onSurface,
           child: FutureBuilder(
-            future: futureFasion,
+            future: widget.futureFasion,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -50,11 +72,15 @@ class CustomFashionGridVew extends StatelessWidget {
                   child: Text('No data avaible'),
                 );
               } else {
+                var filterdData = snapshot.data!
+                    .where((value) => value.category.contains(_activeCategory))
+                    .toList();
                 return Column(
                   children: <Widget>[
                     CategoryListComponent(
                       width: width,
                       xPadding: xPadding,
+                      updateActiveCategory: _updateActiveCategory,
                     ),
                     SizedBox(
                       height: xPadding,
@@ -64,11 +90,11 @@ class CustomFashionGridVew extends StatelessWidget {
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(0),
                         crossAxisCount: 2,
-                        itemCount: snapshot.data!.length,
+                        itemCount: filterdData.length,
                         mainAxisSpacing: xPadding - 5,
                         crossAxisSpacing: xPadding - 2,
                         itemBuilder: (context, index) {
-                          final Fashion fashion = snapshot.data![index];
+                          final Fashion fashion = filterdData[index];
                           final id = '${fashion.name}_${fashion.price}';
                           return Container(
                             decoration: BoxDecoration(
@@ -101,7 +127,7 @@ class CustomFashionGridVew extends StatelessWidget {
                                   ),
                                 );
 
-                                pullRefresh();
+                                widget.pullRefresh();
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -50,6 +50,7 @@ class _FashionDetailsState extends State<FashionDetails> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     final double topPadding = MediaQuery.of(context).padding.top;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
     final double xPadding = MediaQuery.of(context).size.width * 0.03;
@@ -93,13 +94,13 @@ class _FashionDetailsState extends State<FashionDetails> {
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(width * 0.07),
             ),
-            height: 500,
+            height: height * 0.5,
             child: Stack(
               children: <Widget>[
                 CustomImageComponent(
                   image: _activeImage,
                   isDetail: true,
-                  height: 500,
+                  height: height * 0.5,
                 ),
                 Padding(
                   padding: EdgeInsets.all(xPadding),
@@ -117,7 +118,7 @@ class _FashionDetailsState extends State<FashionDetails> {
                               borderRadius: BorderRadius.circular(width * 0.07),
                               child: Image.network(
                                 imageUrl,
-                                height: 80,
+                                height: (height * 0.5) / 6,
                                 color: _checkIfMainImage(imageUrl),
                                 colorBlendMode: BlendMode.darken,
                               ),

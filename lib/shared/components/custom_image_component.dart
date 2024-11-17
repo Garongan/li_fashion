@@ -26,6 +26,7 @@ class CustomImageComponent extends StatelessWidget {
         image,
         fit: BoxFit.cover,
         height: height,
+        width: double.infinity,
       ),
     );
   }
