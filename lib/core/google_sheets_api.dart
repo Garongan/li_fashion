@@ -15,13 +15,13 @@ class GoogleSheetsApi {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return List<List<dynamic>>.from(data['values']);
+      return List<List<dynamic>>.from(data['values']).skip(1).toList();
     } else {
       throw Exception('Failed to load spreadsheet data');
     }
   }
 
-  Future<List<Fashion>> getFashionData() async {
+  Future<List<Fashion>> getFashionData(String category) async {
     final url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/Sheet1?key=$_apiKey';
 
@@ -33,8 +33,14 @@ class GoogleSheetsApi {
 
       rows.removeAt(0);
 
-      List<Fashion> fashions = rows.map((row) => Fashion.fromSheet(row)).toList();
-      return fashions;
+      List<Fashion> fashions =
+          rows.map((row) => Fashion.fromSheet(row)).toList();
+      if (category == '') {
+        return fashions;
+      }
+      return fashions
+          .where((value) => value.category.contains(category))
+          .toList();
     } else {
       throw Exception('Failed to load data');
     }

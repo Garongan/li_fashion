@@ -6,33 +6,18 @@ import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/features/fashion/fashion_details.dart';
 import 'package:li_fashion/shared/components/custom_image_component.dart';
 
-class CustomFashionGridVew extends StatefulWidget {
+class CustomFashionGridVew extends StatelessWidget {
   final Future<List<Fashion>> futureFasion;
   final RefreshCallback pullRefresh;
+  final Function(String) updateActiveCategory;
+  final String activeCategory;
   const CustomFashionGridVew({
     super.key,
     required this.pullRefresh,
     required this.futureFasion,
+    required this.updateActiveCategory,
+    required this.activeCategory,
   });
-
-  @override
-  State<CustomFashionGridVew> createState() => _CustomFashionGridVewState();
-}
-
-class _CustomFashionGridVewState extends State<CustomFashionGridVew> {
-  String _activeCategory = '';
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  void _updateActiveCategory(String category) {
-    setState(() {
-      _activeCategory = category;
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,57 +36,56 @@ class _CustomFashionGridVewState extends State<CustomFashionGridVew> {
           bottom: bottomPadding,
         ),
         padding: EdgeInsets.all(xPadding),
-        child: RefreshIndicator(
-          onRefresh: widget.pullRefresh,
-          color: colorScheme.onSurface,
-          child: FutureBuilder(
-            future: widget.futureFasion,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: colorScheme.onSurface,
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                return const Center(
-                  child: Text('Failed to fetch data'),
-                );
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text('No data avaible'),
-                );
-              } else {
-                var filterdData = snapshot.data!
-                    .where((value) => value.category.contains(_activeCategory))
-                    .toList();
-                return Column(
-                  children: <Widget>[
-                    CategoryListComponent(
-                      width: width,
-                      xPadding: xPadding,
-                      updateActiveCategory: _updateActiveCategory,
-                    ),
-                    SizedBox(
-                      height: xPadding,
-                    ),
-                    Expanded(
-                      child: MasonryGridView.count(
+        child: Column(
+          children: <Widget>[
+            CategoryListComponent(
+              width: width,
+              xPadding: xPadding,
+              updateActiveCategory: updateActiveCategory,
+              activeCategory: activeCategory,
+            ),
+            SizedBox(
+              height: xPadding,
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: pullRefresh,
+                color: colorScheme.onSurface,
+                child: FutureBuilder(
+                  future: futureFasion,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: colorScheme.onSurface,
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Failed to fetch data'),
+                      );
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                        child: Text('No data avaible'),
+                      );
+                    } else {
+                      return MasonryGridView.count(
                         shrinkWrap: true,
                         padding: const EdgeInsets.all(0),
                         crossAxisCount: 2,
-                        itemCount: filterdData.length,
+                        itemCount: snapshot.data!.length,
                         mainAxisSpacing: xPadding - 5,
                         crossAxisSpacing: xPadding - 2,
                         itemBuilder: (context, index) {
-                          final Fashion fashion = filterdData[index];
+                          final Fashion fashion = snapshot.data![index];
                           final id = '${fashion.name}_${fashion.price}';
                           return Container(
                             decoration: BoxDecoration(
                               boxShadow: <BoxShadow>[
                                 BoxShadow(
                                   blurRadius: 2,
-                                  color: colorScheme.onSurface.withAlpha(100),
+                                  color:
+                                      colorScheme.onSurface.withAlpha(100),
                                   offset: const Offset(1, 1),
                                 ),
                               ],
@@ -126,11 +110,12 @@ class _CustomFashionGridVewState extends State<CustomFashionGridVew> {
                                     ),
                                   ),
                                 );
-
-                                widget.pullRefresh();
+                                          
+                                pullRefresh();
                               },
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
                                 children: [
                                   Stack(
                                     children: <Widget>[
@@ -181,13 +166,13 @@ class _CustomFashionGridVewState extends State<CustomFashionGridVew> {
                             ),
                           );
                         },
-                      ),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

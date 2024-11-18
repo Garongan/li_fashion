@@ -14,19 +14,26 @@ class FashionList extends StatefulWidget {
 
 class _FashionListState extends State<FashionList> {
   final _api = GoogleSheetsApi();
-
+  String _activeCategory = 'Trending';
   late Future<List<Fashion>> _futureFasion;
 
   @override
   void initState() {
     super.initState();
-    _futureFasion = _api.getFashionData();
+    _futureFasion = _api.getFashionData(_activeCategory);
   }
 
   Future<void> _pullRefresh() async {
     setState(() {
-      _futureFasion = _api.getFashionData();
+      _futureFasion = _api.getFashionData(_activeCategory);
     });
+  }
+
+  void _updateActiveCategory(String category) {
+    setState(() {
+      _activeCategory = category;
+    });
+    _pullRefresh();
   }
 
   @override
@@ -88,6 +95,8 @@ class _FashionListState extends State<FashionList> {
           CustomFashionGridVew(
             pullRefresh: _pullRefresh,
             futureFasion: _futureFasion,
+            updateActiveCategory: _updateActiveCategory,
+            activeCategory: _activeCategory,
           ),
           const SizedBox(
             height: 5,

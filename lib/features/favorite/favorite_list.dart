@@ -14,18 +14,24 @@ class FavoriteList extends StatefulWidget {
 
 class _FavoriteListState extends State<FavoriteList> {
   final _api = GoogleSheetsApi();
-
+  String _activeCategory = 'Trending';
   late Future<List<Fashion>> _futureFasion;
 
   @override
   void initState() {
     super.initState();
-    _futureFasion = _api.getFashionData();
+    _futureFasion = _api.getFashionData(_activeCategory);
   }
 
   Future<void> _pullRefresh() async {
     setState(() {
-      _futureFasion = _api.getFashionData();
+      _futureFasion = _api.getFashionData(_activeCategory);
+    });
+  }
+
+  void _updateActiveCategory(String category) {
+    setState(() {
+      _activeCategory = category;
     });
   }
 
@@ -92,6 +98,8 @@ class _FavoriteListState extends State<FavoriteList> {
           CustomFashionGridVew(
             pullRefresh: _pullRefresh,
             futureFasion: _futureFasion,
+            updateActiveCategory: _updateActiveCategory,
+            activeCategory: _activeCategory,
           ),
         ],
       ),
