@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/shared/components/app_bar_component.dart';
-import 'package:li_fashion/shared/components/custom_fashion_grid_vew.dart';
+import 'package:li_fashion/shared/components/fashion_grid_vew.dart';
 import 'package:li_fashion/shared/services/api_service.dart';
 
 class FashionList extends StatefulWidget {
@@ -17,11 +17,12 @@ class _FashionListState extends State<FashionList> {
   String _activeCategory = 'Trending';
   late Future<List<Fashion>> _futureFasion;
   late TextEditingController _textEditingController;
+  bool _isSearch = true;
 
   @override
   void initState() {
     super.initState();
-    _futureFasion = _api.getFashionData(_activeCategory, '');
+    _futureFasion = _api.getFilteredData(null, _activeCategory, '');
     _textEditingController = TextEditingController();
   }
 
@@ -33,7 +34,7 @@ class _FashionListState extends State<FashionList> {
 
   Future<void> _pullRefresh() async {
     setState(() {
-      _futureFasion = _api.getFashionData(_activeCategory, '');
+      _futureFasion = _api.getFilteredData(null, _activeCategory, '');
     });
   }
 
@@ -44,11 +45,23 @@ class _FashionListState extends State<FashionList> {
     _pullRefresh();
   }
 
-  Future<void> _onSearch() async {
+  void _onSearch() {
     setState(() {
-      _futureFasion = _api.getFashionData(_activeCategory, _textEditingController.text);
+      _futureFasion = _api.getFilteredData(
+        null,
+        _activeCategory,
+        _textEditingController.text,
+      );
+      _isSearch = !_isSearch;
     });
+  }
+
+  void _clearSearch() {
     _textEditingController.clear();
+    _pullRefresh();
+    setState(() {
+      _isSearch = !_isSearch;
+    });
   }
 
   @override
@@ -92,12 +105,25 @@ class _FashionListState extends State<FashionList> {
                     controller: _textEditingController,
                     cursorColor: colorScheme.onSurface,
                     onSubmitted: (value) => _onSearch(),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Search your needs',
-                      contentPadding: EdgeInsets.symmetric(vertical: 16),
-                      prefixIcon: IconTheme(
-                        data: customIconThemeData,
-                        child: Icon(Icons.search_outlined),
+                      contentPadding: const EdgeInsets.all(16),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          if (_isSearch) {
+                            _onSearch();
+                          } else {
+                            _clearSearch();
+                          }
+                        },
+                        icon: IconTheme(
+                          data: customIconThemeData,
+                          child: Icon(
+                            _textEditingController.text.isEmpty
+                                ? Icons.search_outlined
+                                : Icons.highlight_remove_outlined,
+                          ),
+                        ),
                       ),
                     ),
                     textAlignVertical: TextAlignVertical.center,
@@ -109,7 +135,7 @@ class _FashionListState extends State<FashionList> {
           const SizedBox(
             height: 5,
           ),
-          CustomFashionGridVew(
+          FashionGridVew(
             pullRefresh: _pullRefresh,
             futureFasion: _futureFasion,
             updateActiveCategory: _updateActiveCategory,

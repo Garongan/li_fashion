@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CustomButtonComponent extends StatelessWidget {
+class ButtonComponent extends StatelessWidget {
   final double? bottomPadding;
   final String text;
   final Color foregroundColor;
   final Color backgroundColor;
   final VoidCallback onPressed;
-  const CustomButtonComponent({
+  const ButtonComponent({
     super.key,
     this.bottomPadding,
     required this.text,

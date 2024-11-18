@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:li_fashion/shared/components/category_list_component.dart';
-import 'package:li_fashion/shared/components/favourite_button_component.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/features/fashion/fashion_details.dart';
-import 'package:li_fashion/shared/components/custom_image_component.dart';
+import 'package:li_fashion/shared/components/category_list_component.dart';
+import 'package:li_fashion/shared/components/favorite_button_component.dart';
+import 'package:li_fashion/shared/components/image_component.dart';
 
-class CustomFashionGridVew extends StatelessWidget {
+class FashionGridVew extends StatelessWidget {
   final Future<List<Fashion>> futureFasion;
   final RefreshCallback pullRefresh;
   final Function(String) updateActiveCategory;
   final String activeCategory;
-  const CustomFashionGridVew({
+  const FashionGridVew({
     super.key,
     required this.pullRefresh,
     required this.futureFasion,
@@ -119,7 +119,7 @@ class CustomFashionGridVew extends StatelessWidget {
                                 children: [
                                   Stack(
                                     children: <Widget>[
-                                      CustomImageComponent(
+                                      ImageComponent(
                                         image: fashion.image[0],
                                         isDetail: false,
                                         height: 200,
@@ -127,7 +127,7 @@ class CustomFashionGridVew extends StatelessWidget {
                                       Positioned(
                                         top: 7,
                                         right: 7,
-                                        child: FavouriteButtonComponent(
+                                        child: FavoriteButtonComponent(
                                           id: id,
                                           padding: 0,
                                         ),

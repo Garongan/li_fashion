@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CustomImageComponent extends StatelessWidget {
+class ImageComponent extends StatelessWidget {
   final String image;
   final bool isDetail;
   final double height;
-  const CustomImageComponent({
+  const ImageComponent({
     super.key,
     required this.image,
     required this.isDetail,

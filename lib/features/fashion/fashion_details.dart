@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:li_fashion/shared/components/app_bar_component.dart';
-import 'package:li_fashion/shared/components/favourite_button_component.dart';
+import 'package:li_fashion/shared/components/favorite_button_component.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
-import 'package:li_fashion/shared/components/custom_button_component.dart';
-import 'package:li_fashion/shared/components/custom_image_component.dart';
+import 'package:li_fashion/shared/components/button_component.dart';
+import 'package:li_fashion/shared/components/image_component.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FashionDetails extends StatefulWidget {
@@ -76,7 +76,7 @@ class _FashionDetailsState extends State<FashionDetails> {
             child: Column(
               children: <Widget>[
                 AppBarComponent(
-                  action: FavouriteButtonComponent(
+                  action: FavoriteButtonComponent(
                     id: widget.id,
                     padding: 7,
                     background: colorScheme.primary,
@@ -97,7 +97,7 @@ class _FashionDetailsState extends State<FashionDetails> {
             height: height * 0.5,
             child: Stack(
               children: <Widget>[
-                CustomImageComponent(
+                ImageComponent(
                   image: _activeImage,
                   isDetail: true,
                   height: height * 0.5,
@@ -178,7 +178,7 @@ class _FashionDetailsState extends State<FashionDetails> {
           const SizedBox(
             height: 5,
           ),
-          CustomButtonComponent(
+          ButtonComponent(
             bottomPadding: bottomPadding,
             text: 'Checkout',
             foregroundColor: colorScheme.onSurface,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:li_fashion/features/fashion/fashion_list.dart';
-import 'package:li_fashion/shared/components/custom_button_component.dart';
+import 'package:li_fashion/shared/components/button_component.dart';
 import 'package:marquee/marquee.dart';
 
 class Landing extends StatelessWidget {
@@ -85,7 +85,7 @@ class Landing extends StatelessWidget {
             const SizedBox(
               height: 5,
             ),
-            CustomButtonComponent(
+            ButtonComponent(
               bottomPadding: bottomPadding,
               text: 'Discover Now',
               foregroundColor: colorScheme.onSurface,

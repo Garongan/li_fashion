@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FavouriteService {
+class FavoriteService {
   Future<void> saveLoved(String key, bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isFavourite_$key', value);

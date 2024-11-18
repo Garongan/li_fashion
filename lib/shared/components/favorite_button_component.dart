@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/shared/services/favourite_service.dart';
+import 'package:li_fashion/shared/services/favorite_service.dart';
 
-class FavouriteButtonComponent extends StatefulWidget {
+class FavoriteButtonComponent extends StatefulWidget {
   final String id;
   final double padding;
   final Color? background;
-  const FavouriteButtonComponent({super.key, required this.id, required this.padding, this.background});
+  const FavoriteButtonComponent({super.key, required this.id, required this.padding, this.background});
 
   @override
-  State<FavouriteButtonComponent> createState() =>
-      _FavouriteButtonComponentState();
+  State<FavoriteButtonComponent> createState() =>
+      _FavoriteButtonComponentState();
 }
 
-class _FavouriteButtonComponentState extends State<FavouriteButtonComponent> {
-  final _favoriteService = FavouriteService();
+class _FavoriteButtonComponentState extends State<FavoriteButtonComponent> {
+  final _favoriteService = FavoriteService();
   bool isFavorite = false;
 
   @override
