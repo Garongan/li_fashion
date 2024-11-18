@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/features/fashion/fashion_service.dart';
+import 'package:li_fashion/shared/services/favourite_service.dart';
 
 class FavouriteButtonComponent extends StatefulWidget {
   final String id;
@@ -13,7 +13,7 @@ class FavouriteButtonComponent extends StatefulWidget {
 }
 
 class _FavouriteButtonComponentState extends State<FavouriteButtonComponent> {
-  final _fashionService = FashionService();
+  final _favoriteService = FavouriteService();
   bool isFavorite = false;
 
   @override
@@ -23,7 +23,7 @@ class _FavouriteButtonComponentState extends State<FavouriteButtonComponent> {
   }
 
   Future<void> _loadFavoriteStatus() async {
-    bool favoriteStatus = await _fashionService.getLoved(widget.id);
+    bool favoriteStatus = await _favoriteService.getLoved(widget.id);
     if (mounted) {
       setState(() {
         isFavorite = favoriteStatus;
@@ -38,9 +38,9 @@ class _FavouriteButtonComponentState extends State<FavouriteButtonComponent> {
       });
     }
     if (isFavorite == true) {
-      await _fashionService.saveLoved(widget.id, true);
+      await _favoriteService.saveLoved(widget.id, true);
     } else {
-      await _fashionService.deleteLoved(widget.id);
+      await _favoriteService.deleteLoved(widget.id);
     }
   }
 

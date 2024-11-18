@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:li_fashion/features/favorite/favorite_list.dart';
 
-class CustomAppBar extends StatelessWidget {
+class AppBarComponent extends StatelessWidget {
   final Widget? action;
   final String? title;
-  const CustomAppBar({super.key, this.action, this.title});
+  const AppBarComponent({super.key, this.action, this.title});
 
   @override
   Widget build(BuildContext context) {

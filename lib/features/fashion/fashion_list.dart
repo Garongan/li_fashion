@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/core/google_sheets_api.dart';
 import 'package:li_fashion/core/theme.dart';
-import 'package:li_fashion/features/fashion/components/custom_app_bar.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
+import 'package:li_fashion/shared/components/app_bar_component.dart';
 import 'package:li_fashion/shared/components/custom_fashion_grid_vew.dart';
+import 'package:li_fashion/shared/services/api_service.dart';
 
 class FashionList extends StatefulWidget {
   const FashionList({super.key});
@@ -13,19 +13,27 @@ class FashionList extends StatefulWidget {
 }
 
 class _FashionListState extends State<FashionList> {
-  final _api = GoogleSheetsApi();
+  final _api = ApiService();
   String _activeCategory = 'Trending';
   late Future<List<Fashion>> _futureFasion;
+  late TextEditingController _textEditingController;
 
   @override
   void initState() {
     super.initState();
-    _futureFasion = _api.getFashionData(_activeCategory);
+    _futureFasion = _api.getFashionData(_activeCategory, '');
+    _textEditingController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
 
   Future<void> _pullRefresh() async {
     setState(() {
-      _futureFasion = _api.getFashionData(_activeCategory);
+      _futureFasion = _api.getFashionData(_activeCategory, '');
     });
   }
 
@@ -34,6 +42,13 @@ class _FashionListState extends State<FashionList> {
       _activeCategory = category;
     });
     _pullRefresh();
+  }
+
+  Future<void> _onSearch() async {
+    setState(() {
+      _futureFasion = _api.getFashionData(_activeCategory, _textEditingController.text);
+    });
+    _textEditingController.clear();
   }
 
   @override
@@ -63,7 +78,7 @@ class _FashionListState extends State<FashionList> {
             ),
             child: Column(
               children: <Widget>[
-                const CustomAppBar(),
+                const AppBarComponent(),
                 SizedBox(
                   height: xPadding,
                 ),
@@ -74,7 +89,9 @@ class _FashionListState extends State<FashionList> {
                   ),
                   padding: const EdgeInsets.all(7),
                   child: TextField(
+                    controller: _textEditingController,
                     cursorColor: colorScheme.onSurface,
+                    onSubmitted: (value) => _onSearch(),
                     decoration: const InputDecoration(
                       hintText: 'Search your needs',
                       contentPadding: EdgeInsets.symmetric(vertical: 16),

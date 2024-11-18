@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/features/fashion/components/custom_app_bar.dart';
-import 'package:li_fashion/features/fashion/components/favourite_button_component.dart';
+import 'package:li_fashion/shared/components/app_bar_component.dart';
+import 'package:li_fashion/shared/components/favourite_button_component.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/shared/components/custom_button_component.dart';
 import 'package:li_fashion/shared/components/custom_image_component.dart';
@@ -75,7 +75,7 @@ class _FashionDetailsState extends State<FashionDetails> {
             ),
             child: Column(
               children: <Widget>[
-                CustomAppBar(
+                AppBarComponent(
                   action: FavouriteButtonComponent(
                     id: widget.id,
                     padding: 7,

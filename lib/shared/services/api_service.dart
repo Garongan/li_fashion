@@ -1,9 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:li_fashion/features/fashion/fashion.dart';
 
-class GoogleSheetsApi {
+class ApiService {
   final _apiKey = dotenv.env['API_KEY'];
   final _spreadsheetId = dotenv.env['SPREADSHEET_ID'];
 
@@ -21,7 +22,7 @@ class GoogleSheetsApi {
     }
   }
 
-  Future<List<Fashion>> getFashionData(String category) async {
+  Future<List<Fashion>> getFashionData(String category, String search) async {
     final url =
         'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/Sheet1?key=$_apiKey';
 
@@ -35,9 +36,26 @@ class GoogleSheetsApi {
 
       List<Fashion> fashions =
           rows.map((row) => Fashion.fromSheet(row)).toList();
-      if (category == '') {
+
+      if (category == 'All' && search.isEmpty) {
         return fashions;
       }
+
+      if (category == 'All' && search.isNotEmpty) {
+        return fashions
+            .where((value) =>
+                value.name.toLowerCase().contains(search.toLowerCase()))
+            .toList();
+      }
+
+      if (search.isNotEmpty) {
+        return fashions
+            .where((value) =>
+                value.category.contains(category) &&
+                value.name.toLowerCase().contains(search.toLowerCase()))
+            .toList();
+      }
+
       return fashions
           .where((value) => value.category.contains(category))
           .toList();

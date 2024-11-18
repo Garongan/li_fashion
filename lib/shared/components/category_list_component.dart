@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/core/google_sheets_api.dart';
+import 'package:li_fashion/shared/services/api_service.dart';
 
 class CategoryListComponent extends StatefulWidget {
   final double width;
@@ -19,7 +19,7 @@ class CategoryListComponent extends StatefulWidget {
 }
 
 class _CategoryListComponentState extends State<CategoryListComponent> {
-  final _api = GoogleSheetsApi();
+  final _api = ApiService();
   List<List<dynamic>> _category = [];
 
   @override

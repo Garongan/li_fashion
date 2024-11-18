@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:li_fashion/features/fashion/components/category_list_component.dart';
-import 'package:li_fashion/features/fashion/components/favourite_button_component.dart';
+import 'package:li_fashion/shared/components/category_list_component.dart';
+import 'package:li_fashion/shared/components/favourite_button_component.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/features/fashion/fashion_details.dart';
 import 'package:li_fashion/shared/components/custom_image_component.dart';

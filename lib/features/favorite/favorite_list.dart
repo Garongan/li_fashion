@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/core/google_sheets_api.dart';
+import 'package:li_fashion/shared/services/api_service.dart';
 import 'package:li_fashion/core/theme.dart';
-import 'package:li_fashion/features/fashion/components/custom_app_bar.dart';
+import 'package:li_fashion/shared/components/app_bar_component.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/shared/components/custom_fashion_grid_vew.dart';
 
@@ -13,19 +13,19 @@ class FavoriteList extends StatefulWidget {
 }
 
 class _FavoriteListState extends State<FavoriteList> {
-  final _api = GoogleSheetsApi();
+  final _api = ApiService();
   String _activeCategory = 'Trending';
   late Future<List<Fashion>> _futureFasion;
 
   @override
   void initState() {
     super.initState();
-    _futureFasion = _api.getFashionData(_activeCategory);
+    _futureFasion = _api.getFashionData(_activeCategory, '');
   }
 
   Future<void> _pullRefresh() async {
     setState(() {
-      _futureFasion = _api.getFashionData(_activeCategory);
+      _futureFasion = _api.getFashionData(_activeCategory, '');
     });
   }
 
@@ -62,7 +62,7 @@ class _FavoriteListState extends State<FavoriteList> {
             ),
             child: Column(
               children: <Widget>[
-                const CustomAppBar(
+                const AppBarComponent(
                   action: SizedBox(
                     width: 60,
                   ),
