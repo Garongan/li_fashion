@@ -90,6 +90,7 @@ const InputDecorationTheme customInputDecorationTheme = InputDecorationTheme(
     fontSize: 16,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.1,
+    color: Color(0xff000000),
   ),
   border: InputBorder.none,
 );
@@ -104,6 +105,11 @@ var lightTheme = ThemeData(
     outline: const Color(0xffe2e2e2),
     primary: seedColor,
     secondary: const Color(0xffe4ad7f),
+  ),
+  textSelectionTheme: const TextSelectionThemeData(
+    cursorColor: Color(0xff000000),
+    selectionHandleColor: Color(0xffe4ad7f),
+    selectionColor: Color(0xffe4ad7f),
   ),
   fontFamily: 'Inter',
   textTheme: customTextTheme,
@@ -121,6 +127,11 @@ var darkTheme = ThemeData(
     outline: const Color(0xffe2e2e2),
     primary: seedColor,
     secondary: const Color(0xffe4ad7f),
+  ),
+  textSelectionTheme: const TextSelectionThemeData(
+    cursorColor: Color(0xff000000),
+    selectionHandleColor: Color(0xffe4ad7f),
+    selectionColor: Color(0xffe4ad7f),
   ),
   fontFamily: 'Inter',
   textTheme: customTextTheme,

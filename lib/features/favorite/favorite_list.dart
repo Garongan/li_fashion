@@ -101,7 +101,6 @@ class _FavoriteListState extends State<FavoriteList> {
                   ),
                   padding: const EdgeInsets.all(7),
                   child: TextField(
-                    cursorColor: colorScheme.onSurface,
                     controller: _textEditingController,
                     onSubmitted: (value) => _onSearch(),
                     decoration: InputDecoration(

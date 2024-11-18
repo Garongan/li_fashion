@@ -66,14 +66,82 @@ class _FashionListState extends State<FashionList> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final double width = MediaQuery.of(context).size.width;
     final double topPadding = MediaQuery.of(context).padding.top;
     final double xPadding = MediaQuery.of(context).size.width * 0.03;
 
-    return Scaffold(
-      backgroundColor: colorScheme.onSurface,
-      body: Column(
+    return Scaffold(body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      if (constraints.maxWidth > 1200) {
+        return _DekstopView(
+          colorScheme: colorScheme,
+          width: width,
+          topPadding: topPadding,
+          xPadding: xPadding,
+          textEditingController: _textEditingController,
+          onSearch: _onSearch,
+          isSearch: _isSearch,
+          clearSearch: _clearSearch,
+          pullRefresh: _pullRefresh,
+          futureFasion: _futureFasion,
+          updateActiveCategory: _updateActiveCategory,
+          activeCategory: _activeCategory,
+        );
+      } else {
+        return _MobileTabletView(
+          colorScheme: colorScheme,
+          width: width,
+          topPadding: topPadding,
+          xPadding: xPadding,
+          textEditingController: _textEditingController,
+          onSearch: _onSearch,
+          isSearch: _isSearch,
+          clearSearch: _clearSearch,
+          pullRefresh: _pullRefresh,
+          futureFasion: _futureFasion,
+          updateActiveCategory: _updateActiveCategory,
+          activeCategory: _activeCategory,
+        );
+      }
+    }));
+  }
+}
+
+class _MobileTabletView extends StatelessWidget {
+  final ColorScheme colorScheme;
+  final double width;
+  final double topPadding;
+  final double xPadding;
+  final TextEditingController textEditingController;
+  final Function onSearch;
+  final bool isSearch;
+  final Function clearSearch;
+  final RefreshCallback pullRefresh;
+  final Future<List<Fashion>> futureFasion;
+  final Function(String) updateActiveCategory;
+  final String activeCategory;
+
+  const _MobileTabletView({
+    required this.colorScheme,
+    required this.width,
+    required this.topPadding,
+    required this.xPadding,
+    required this.textEditingController,
+    required this.onSearch,
+    required this.isSearch,
+    required this.clearSearch,
+    required this.pullRefresh,
+    required this.futureFasion,
+    required this.updateActiveCategory,
+    required this.activeCategory,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: colorScheme.onSurface,
+      child: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(
@@ -102,24 +170,23 @@ class _FashionListState extends State<FashionList> {
                   ),
                   padding: const EdgeInsets.all(7),
                   child: TextField(
-                    controller: _textEditingController,
-                    cursorColor: colorScheme.onSurface,
-                    onSubmitted: (value) => _onSearch(),
+                    controller: textEditingController,
+                    onSubmitted: (value) => onSearch(),
                     decoration: InputDecoration(
                       hintText: 'Search your needs',
                       contentPadding: const EdgeInsets.all(16),
                       suffixIcon: IconButton(
                         onPressed: () {
-                          if (_isSearch) {
-                            _onSearch();
+                          if (isSearch) {
+                            onSearch();
                           } else {
-                            _clearSearch();
+                            clearSearch();
                           }
                         },
                         icon: IconTheme(
                           data: customIconThemeData,
                           child: Icon(
-                            _textEditingController.text.isEmpty
+                            textEditingController.text.isEmpty
                                 ? Icons.search_outlined
                                 : Icons.highlight_remove_outlined,
                           ),
@@ -136,15 +203,128 @@ class _FashionListState extends State<FashionList> {
             height: 5,
           ),
           FashionGridVew(
-            pullRefresh: _pullRefresh,
-            futureFasion: _futureFasion,
-            updateActiveCategory: _updateActiveCategory,
-            activeCategory: _activeCategory,
+            pullRefresh: pullRefresh,
+            futureFasion: futureFasion,
+            updateActiveCategory: updateActiveCategory,
+            activeCategory: activeCategory,
           ),
           const SizedBox(
             height: 5,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DekstopView extends StatelessWidget {
+  final ColorScheme colorScheme;
+  final double width;
+  final double topPadding;
+  final double xPadding;
+  final TextEditingController textEditingController;
+  final Function onSearch;
+  final bool isSearch;
+  final Function clearSearch;
+  final RefreshCallback pullRefresh;
+  final Future<List<Fashion>> futureFasion;
+  final Function(String) updateActiveCategory;
+  final String activeCategory;
+
+  const _DekstopView({
+    required this.colorScheme,
+    required this.width,
+    required this.topPadding,
+    required this.xPadding,
+    required this.textEditingController,
+    required this.onSearch,
+    required this.isSearch,
+    required this.clearSearch,
+    required this.pullRefresh,
+    required this.futureFasion,
+    required this.updateActiveCategory,
+    required this.activeCategory,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(28),
+        constraints: const BoxConstraints(
+          maxWidth: 1000,
+        ),
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    blurRadius: 8,
+                    color: colorScheme.onSurface,
+                    offset: const Offset(2, 2),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(7),
+              ),
+              child: Column(
+                children: <Widget>[
+                  const AppBarComponent(),
+                  const SizedBox(
+                    height: 7,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7),
+                      color: colorScheme.primary,
+                    ),
+                    padding: const EdgeInsets.all(7),
+                    child: TextField(
+                      controller: textEditingController,
+                      onSubmitted: (value) => onSearch(),
+                      decoration: InputDecoration(
+                        hintText: 'Search your needs',
+                        contentPadding: const EdgeInsets.all(16),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            if (isSearch) {
+                              onSearch();
+                            } else {
+                              clearSearch();
+                            }
+                          },
+                          icon: IconTheme(
+                            data: customIconThemeData,
+                            child: Icon(
+                              textEditingController.text.isEmpty
+                                  ? Icons.search_outlined
+                                  : Icons.highlight_remove_outlined,
+                            ),
+                          ),
+                        ),
+                      ),
+                      textAlignVertical: TextAlignVertical.center,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            FashionGridVew(
+              pullRefresh: pullRefresh,
+              futureFasion: futureFasion,
+              updateActiveCategory: updateActiveCategory,
+              activeCategory: activeCategory,
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+          ],
+        ),
       ),
     );
   }

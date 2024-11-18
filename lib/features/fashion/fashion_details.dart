@@ -183,6 +183,7 @@ class _FashionDetailsState extends State<FashionDetails> {
             text: 'Checkout',
             foregroundColor: colorScheme.onSurface,
             backgroundColor: colorScheme.primary,
+            radius: width * 0.07,
             onPressed: () => _openShopee(widget.fashion.link),
           ),
           const SizedBox(

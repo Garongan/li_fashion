@@ -5,6 +5,7 @@ class ButtonComponent extends StatelessWidget {
   final String text;
   final Color foregroundColor;
   final Color backgroundColor;
+  final double radius;
   final VoidCallback onPressed;
   const ButtonComponent({
     super.key,
@@ -12,12 +13,12 @@ class ButtonComponent extends StatelessWidget {
     required this.text,
     required this.foregroundColor,
     required this.backgroundColor,
+    required this.radius,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -25,12 +26,12 @@ class ButtonComponent extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(width * 0.07),
+          borderRadius: BorderRadius.circular(radius),
+          color: backgroundColor,
         ),
         child: TextButton(
           style: TextButton.styleFrom(
             foregroundColor: foregroundColor,
-            backgroundColor: backgroundColor,
           ),
           onPressed: onPressed,
           child: Padding(
