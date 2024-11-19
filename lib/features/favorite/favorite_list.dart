@@ -26,6 +26,12 @@ class _FavoriteListState extends State<FavoriteList> {
     _textEditingController = TextEditingController();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _textEditingController.dispose();
+  }
+
   Future<void> _pullRefresh() async {
     setState(() {
       _futureFasion = _api.getLovedFashionData(_activeCategory, '');
@@ -61,9 +67,9 @@ class _FavoriteListState extends State<FavoriteList> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final double width = MediaQuery.of(context).size.width;
-    final double topPadding = MediaQuery.of(context).padding.top;
-    final double xPadding = MediaQuery.of(context).size.width * 0.03;
+    final width = MediaQuery.of(context).size.width;
+    final topPadding = MediaQuery.of(context).padding.top;
+    final xPadding = MediaQuery.of(context).size.width * 0.03;
 
     return Scaffold(body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -98,7 +104,7 @@ class _FavoriteListState extends State<FavoriteList> {
               top: topPadding + xPadding,
               left: xPadding,
               right: xPadding,
-              bottom: topPadding / 2,
+              bottom: xPadding,
             ),
             decoration: BoxDecoration(
               color: colorScheme.surface,
@@ -116,7 +122,7 @@ class _FavoriteListState extends State<FavoriteList> {
                   title: 'Favorites',
                 ),
                 SizedBox(
-                  height: topPadding / 2,
+                  height: xPadding,
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -169,6 +175,9 @@ class _FavoriteListState extends State<FavoriteList> {
             padding: xPadding,
             cardPadding: xPadding,
             isMobileView: true,
+          ),
+          const SizedBox(
+            height: 5,
           ),
         ],
       ),

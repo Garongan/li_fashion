@@ -8,11 +8,11 @@ class Landing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final double width = MediaQuery.of(context).size.width;
-    final double topPadding = MediaQuery.of(context).padding.top;
-    final double xPadding = MediaQuery.of(context).size.width * 0.03;
-    final double bottomPadding = MediaQuery.of(context).padding.bottom;
+    final colorScheme = Theme.of(context).colorScheme;
+    final width = MediaQuery.of(context).size.width;
+    final topPadding = MediaQuery.of(context).padding.top;
+    final xPadding = MediaQuery.of(context).size.width * 0.03;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints boxConstraints) {

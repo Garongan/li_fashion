@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const Color seedColor = Color(0xfffeffdb);
+const seedColor = Color(0xfffeffdb);
 
 const TextTheme customTextTheme = TextTheme(
   displayLarge: TextStyle(
