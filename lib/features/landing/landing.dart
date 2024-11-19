@@ -126,7 +126,7 @@ class _MobileTabletView extends StatelessWidget {
           ButtonComponent(
             bottomPadding: bottomPadding,
             text: 'Discover Now',
-            foregroundColor: colorScheme.onSurface,
+            foregroundColor: const Color(0xff000000),
             backgroundColor: colorScheme.secondary,
             radius: width * 0.07,
             onPressed: () {
@@ -239,23 +239,19 @@ class _DekstopView extends StatelessWidget {
                       const SizedBox(
                         height: 7,
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ButtonComponent(
-                          bottomPadding: bottomPadding,
-                          text: 'Discover Now',
-                          foregroundColor: colorScheme.onSurface,
-                          backgroundColor: colorScheme.secondary,
-                          radius: 7,
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const FashionList(),
-                              ),
-                            );
-                          },
-                        ),
+                      ButtonComponent(
+                        text: 'Discover Now',
+                        foregroundColor: const Color(0xff000000),
+                        backgroundColor: colorScheme.secondary,
+                        radius: 7,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FashionList(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

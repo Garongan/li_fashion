@@ -19,10 +19,9 @@ class ButtonComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: EdgeInsets.only(
-        bottom: bottomPadding == null ? 0 : bottomPadding!,
+        bottom: bottomPadding ?? 0,
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -32,15 +31,13 @@ class ButtonComponent extends StatelessWidget {
         child: TextButton(
           style: TextButton.styleFrom(
             foregroundColor: foregroundColor,
+            textStyle: Theme.of(context).textTheme.headlineSmall,
           ),
           onPressed: onPressed,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Center(
-              child: Text(
-                text,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+              child: Text(text),
             ),
           ),
         ),

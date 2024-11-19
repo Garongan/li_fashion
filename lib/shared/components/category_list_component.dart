@@ -6,12 +6,16 @@ class CategoryListComponent extends StatefulWidget {
   final double xPadding;
   final Function(String) updateActiveCategory;
   final String activeCategory;
+  final double radius;
+  final double spacing;
   const CategoryListComponent({
     super.key,
     required this.width,
     required this.xPadding,
     required this.updateActiveCategory,
     required this.activeCategory,
+    required this.radius,
+    required this.spacing,
   });
 
   @override
@@ -60,13 +64,13 @@ class _CategoryListComponentState extends State<CategoryListComponent> {
         scrollDirection: Axis.horizontal,
         child: Wrap(
           direction: Axis.horizontal,
-          spacing: widget.xPadding,
+          spacing: widget.spacing,
           children: List.generate(
             _category.length,
             (index) {
               return Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(widget.width * 0.07),
+                  borderRadius: BorderRadius.circular(widget.radius),
                   color: _checkActiveCategory(_category[index].join(''))
                       ? colorScheme.onSurface
                       : colorScheme.surface,

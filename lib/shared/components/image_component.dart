@@ -4,29 +4,31 @@ class ImageComponent extends StatelessWidget {
   final String image;
   final bool isDetail;
   final double height;
+  final double? width;
+  final double radius;
   const ImageComponent({
     super.key,
     required this.image,
     required this.isDetail,
     required this.height,
+    required this.radius,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-
     return ClipRRect(
       borderRadius: isDetail
-          ? BorderRadius.circular(width * 0.07)
+          ? BorderRadius.circular(radius)
           : BorderRadius.only(
-              topLeft: Radius.circular(width * 0.07),
-              topRight: Radius.circular(width * 0.07),
+              topLeft: Radius.circular(radius),
+              topRight: Radius.circular(radius),
             ),
       child: Image.network(
         image,
         fit: BoxFit.cover,
         height: height,
-        width: double.infinity,
+        width: width ?? double.infinity,
       ),
     );
   }

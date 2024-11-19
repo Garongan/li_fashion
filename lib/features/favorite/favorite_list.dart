@@ -3,7 +3,7 @@ import 'package:li_fashion/shared/services/api_service.dart';
 import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/shared/components/app_bar_component.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
-import 'package:li_fashion/shared/components/fashion_grid_vew.dart';
+import 'package:li_fashion/shared/components/fashion_grid_view.dart';
 
 class FavoriteList extends StatefulWidget {
   const FavoriteList({super.key});
@@ -65,9 +65,33 @@ class _FavoriteListState extends State<FavoriteList> {
     final double topPadding = MediaQuery.of(context).padding.top;
     final double xPadding = MediaQuery.of(context).size.width * 0.03;
 
-    return Scaffold(
-      backgroundColor: colorScheme.onSurface,
-      body: Column(
+    return Scaffold(body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      if (constraints.maxWidth > 1200) {
+        return _dekstopView(
+            colorScheme: colorScheme,
+            width: width,
+            topPadding: topPadding,
+            xPadding: xPadding);
+      } else {
+        return _mobileTabletView(
+            colorScheme: colorScheme,
+            width: width,
+            topPadding: topPadding,
+            xPadding: xPadding);
+      }
+    }));
+  }
+
+  Widget _mobileTabletView({
+    required ColorScheme colorScheme,
+    required double width,
+    required double topPadding,
+    required double xPadding,
+  }) {
+    return Container(
+      color: colorScheme.onSurface,
+      child: Column(
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(
@@ -132,13 +156,126 @@ class _FavoriteListState extends State<FavoriteList> {
           const SizedBox(
             height: 5,
           ),
-          FashionGridVew(
+          FashionGridView(
             pullRefresh: _pullRefresh,
             futureFasion: _futureFasion,
             updateActiveCategory: _updateActiveCategory,
             activeCategory: _activeCategory,
+            radius: width * 0.07,
+            crossAxisCount: 2,
+            mainAxisSpacing: xPadding - 5,
+            crossAxisSpacing: xPadding - 2,
+            categorySpacing: xPadding,
+            padding: xPadding,
+            cardPadding: xPadding,
+            isMobileView: true,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _dekstopView({
+    required ColorScheme colorScheme,
+    required double width,
+    required double topPadding,
+    required double xPadding,
+  }) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(28),
+          constraints: const BoxConstraints(
+            maxWidth: 1400,
+          ),
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      blurRadius: 8,
+                      color: colorScheme.onSurface,
+                      offset: const Offset(2, 2),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    const AppBarComponent(
+                      action: SizedBox(
+                        width: 60,
+                      ),
+                      title: 'Favorites',
+                    ),
+                    const SizedBox(
+                      height: 28,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(7),
+                        color: colorScheme.primary,
+                      ),
+                      padding: const EdgeInsets.all(7),
+                      child: TextField(
+                        controller: _textEditingController,
+                        onSubmitted: (value) => _onSearch(),
+                        decoration: InputDecoration(
+                          hintText: 'Search your favorite',
+                          contentPadding: const EdgeInsets.all(16),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              if (_isSearch) {
+                                _onSearch();
+                              } else {
+                                _clearSearch();
+                              }
+                            },
+                            icon: IconTheme(
+                              data: customIconThemeData,
+                              child: Icon(
+                                _textEditingController.text.isEmpty
+                                    ? Icons.search_outlined
+                                    : Icons.highlight_remove_outlined,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 28,
+              ),
+              FashionGridView(
+                pullRefresh: _pullRefresh,
+                futureFasion: _futureFasion,
+                updateActiveCategory: _updateActiveCategory,
+                activeCategory: _activeCategory,
+                radius: 7,
+                crossAxisCount: 4,
+                mainAxisSpacing: 7,
+                crossAxisSpacing: 7,
+                categorySpacing: 7,
+                padding: 28,
+                cardPadding: 7,
+                isMobileView: false,
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    blurRadius: 8,
+                    color: colorScheme.onSurface,
+                    offset: const Offset(2, 2),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
