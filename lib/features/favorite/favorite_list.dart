@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:li_fashion/shared/services/api_service.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:li_fashion/core/theme.dart';
-import 'package:li_fashion/shared/components/app_bar_component.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
+import 'package:li_fashion/shared/components/app_bar_component.dart';
 import 'package:li_fashion/shared/components/fashion_grid_view.dart';
+import 'package:li_fashion/shared/services/api_service.dart';
+import 'package:li_fashion/shared/services/fashion_service.dart';
 
 class FavoriteList extends StatefulWidget {
   const FavoriteList({super.key});
@@ -14,54 +16,72 @@ class FavoriteList extends StatefulWidget {
 
 class _FavoriteListState extends State<FavoriteList> {
   final _api = ApiService();
+  final _fashionService = FashionService();
   String _activeCategory = 'Trending';
-  late Future<List<Fashion>> _futureFasion;
   late TextEditingController _textEditingController;
   bool _isSearch = true;
+  static const pageSize = 12;
+  final PagingController<int, Fashion> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
     super.initState();
-    _futureFasion = _api.getLovedFashionData(_activeCategory, '');
     _textEditingController = TextEditingController();
+    _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _textEditingController.dispose();
-  }
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      final newItems = await _api.getFashionData(
+        pageKey,
+        pageSize,
+      );
+      final isLastPage = newItems.isEmpty;
+      final lovedData = await _fashionService.getLovedFashionData(
+        newItems,
+        _activeCategory,
+        _textEditingController.text,
+      );
 
-  Future<void> _pullRefresh() async {
-    setState(() {
-      _futureFasion = _api.getLovedFashionData(_activeCategory, '');
-    });
+      if (isLastPage) {
+        _pagingController.appendLastPage(lovedData);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        _pagingController.appendPage(lovedData, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 
   void _updateActiveCategory(String category) {
     setState(() {
       _activeCategory = category;
     });
-    _pullRefresh();
+    _pagingController.refresh();
   }
 
-  void _onSearch() {
+  Future<void> _onSearch() async {
+    _pagingController.refresh();
     setState(() {
-      _futureFasion = _api.getFilteredData(
-        null,
-        _activeCategory,
-        _textEditingController.text,
-      );
       _isSearch = !_isSearch;
     });
   }
 
   void _clearSearch() {
     _textEditingController.clear();
-    _pullRefresh();
+    _pagingController.refresh();
     setState(() {
       _isSearch = !_isSearch;
     });
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _pagingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -133,6 +153,9 @@ class _FavoriteListState extends State<FavoriteList> {
                   child: TextField(
                     controller: _textEditingController,
                     onSubmitted: (value) => _onSearch(),
+                    style: const TextStyle(
+                      color: Color(0xff000000),
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Search your favorite',
                       contentPadding: const EdgeInsets.all(16),
@@ -163,8 +186,6 @@ class _FavoriteListState extends State<FavoriteList> {
             height: 5,
           ),
           FashionGridView(
-            pullRefresh: _pullRefresh,
-            futureFasion: _futureFasion,
             updateActiveCategory: _updateActiveCategory,
             activeCategory: _activeCategory,
             radius: width * 0.07,
@@ -175,6 +196,7 @@ class _FavoriteListState extends State<FavoriteList> {
             padding: xPadding,
             cardPadding: xPadding,
             isMobileView: true,
+            pagingController: _pagingController,
           ),
           const SizedBox(
             height: 5,
@@ -262,8 +284,6 @@ class _FavoriteListState extends State<FavoriteList> {
                 height: 28,
               ),
               FashionGridView(
-                pullRefresh: _pullRefresh,
-                futureFasion: _futureFasion,
                 updateActiveCategory: _updateActiveCategory,
                 activeCategory: _activeCategory,
                 radius: 7,
@@ -274,6 +294,7 @@ class _FavoriteListState extends State<FavoriteList> {
                 padding: 28,
                 cardPadding: 7,
                 isMobileView: false,
+                pagingController: _pagingController,
                 boxShadow: <BoxShadow>[
                   BoxShadow(
                     blurRadius: 8,

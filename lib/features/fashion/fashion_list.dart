@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:li_fashion/core/theme.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/shared/components/app_bar_component.dart';
 import 'package:li_fashion/shared/components/fashion_grid_view.dart';
 import 'package:li_fashion/shared/services/api_service.dart';
+import 'package:li_fashion/shared/services/fashion_service.dart';
 
 class FashionList extends StatefulWidget {
   const FashionList({super.key});
@@ -14,54 +16,72 @@ class FashionList extends StatefulWidget {
 
 class _FashionListState extends State<FashionList> {
   final _api = ApiService();
+  final _fashionService = FashionService();
   String _activeCategory = 'Trending';
-  late Future<List<Fashion>> _futureFasion;
   late TextEditingController _textEditingController;
   bool _isSearch = true;
+  var pageSize = 12;
+  final PagingController<int, Fashion> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
     super.initState();
-    _futureFasion = _api.getFilteredData(null, _activeCategory, '');
     _textEditingController = TextEditingController();
+    _pagingController.addPageRequestListener(_fetchPage);
   }
 
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pullRefresh() async {
-    setState(() {
-      _futureFasion = _api.getFilteredData(null, _activeCategory, '');
-    });
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      final newItems = await _api.getFashionData(
+        pageKey,
+        pageSize,
+      );
+      final isLastPage = newItems.isEmpty;
+      final filteredData = await _fashionService.getFilteredData(
+        newItems,
+        _activeCategory,
+        _textEditingController.text,
+      );
+      if (isLastPage) {
+        _pagingController.appendLastPage(filteredData);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        _pagingController.appendPage(filteredData, nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 
   void _updateActiveCategory(String category) {
     setState(() {
       _activeCategory = category;
     });
-    _pullRefresh();
+    
+    _pagingController.refresh();
   }
 
   void _onSearch() {
+    _pagingController.refresh();
     setState(() {
-      _futureFasion = _api.getFilteredData(
-        null,
-        _activeCategory,
-        _textEditingController.text,
-      );
       _isSearch = !_isSearch;
     });
   }
 
   void _clearSearch() {
     _textEditingController.clear();
-    _pullRefresh();
+    _pagingController.refresh();
     setState(() {
       _isSearch = !_isSearch;
     });
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _pagingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -74,71 +94,19 @@ class _FashionListState extends State<FashionList> {
     return Scaffold(body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       if (constraints.maxWidth > 1200) {
-        return _DekstopView(
-          colorScheme: colorScheme,
-          width: width,
-          topPadding: topPadding,
-          xPadding: xPadding,
-          textEditingController: _textEditingController,
-          onSearch: _onSearch,
-          isSearch: _isSearch,
-          clearSearch: _clearSearch,
-          pullRefresh: _pullRefresh,
-          futureFasion: _futureFasion,
-          updateActiveCategory: _updateActiveCategory,
-          activeCategory: _activeCategory,
-        );
+        return _dekstopView(colorScheme, topPadding, xPadding, width);
       } else {
-        return _MobileTabletView(
-          colorScheme: colorScheme,
-          width: width,
-          topPadding: topPadding,
-          xPadding: xPadding,
-          textEditingController: _textEditingController,
-          onSearch: _onSearch,
-          isSearch: _isSearch,
-          clearSearch: _clearSearch,
-          pullRefresh: _pullRefresh,
-          futureFasion: _futureFasion,
-          updateActiveCategory: _updateActiveCategory,
-          activeCategory: _activeCategory,
-        );
+        return _mobileTabletView(colorScheme, topPadding, xPadding, width);
       }
     }));
   }
-}
 
-class _MobileTabletView extends StatelessWidget {
-  final ColorScheme colorScheme;
-  final double width;
-  final double topPadding;
-  final double xPadding;
-  final TextEditingController textEditingController;
-  final Function onSearch;
-  final bool isSearch;
-  final Function clearSearch;
-  final RefreshCallback pullRefresh;
-  final Future<List<Fashion>> futureFasion;
-  final Function(String) updateActiveCategory;
-  final String activeCategory;
-
-  const _MobileTabletView({
-    required this.colorScheme,
-    required this.width,
-    required this.topPadding,
-    required this.xPadding,
-    required this.textEditingController,
-    required this.onSearch,
-    required this.isSearch,
-    required this.clearSearch,
-    required this.pullRefresh,
-    required this.futureFasion,
-    required this.updateActiveCategory,
-    required this.activeCategory,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _mobileTabletView(
+    ColorScheme colorScheme,
+    double topPadding,
+    double xPadding,
+    double width,
+  ) {
     return Container(
       color: colorScheme.onSurface,
       child: Column(
@@ -170,23 +138,26 @@ class _MobileTabletView extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.all(7),
                   child: TextField(
-                    controller: textEditingController,
-                    onSubmitted: (value) => onSearch(),
+                    controller: _textEditingController,
+                    onSubmitted: (value) => _onSearch(),
+                    style: const TextStyle(
+                      color: Color(0xff000000),
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Search your needs',
                       contentPadding: const EdgeInsets.all(16),
                       suffixIcon: IconButton(
                         onPressed: () {
-                          if (isSearch) {
-                            onSearch();
+                          if (_isSearch) {
+                            _onSearch();
                           } else {
-                            clearSearch();
+                            _clearSearch();
                           }
                         },
                         icon: IconTheme(
                           data: customIconThemeData,
                           child: Icon(
-                            textEditingController.text.isEmpty
+                            _textEditingController.text.isEmpty
                                 ? Icons.search_outlined
                                 : Icons.highlight_remove_outlined,
                           ),
@@ -203,10 +174,8 @@ class _MobileTabletView extends StatelessWidget {
             height: 5,
           ),
           FashionGridView(
-            pullRefresh: pullRefresh,
-            futureFasion: futureFasion,
-            updateActiveCategory: updateActiveCategory,
-            activeCategory: activeCategory,
+            updateActiveCategory: _updateActiveCategory,
+            activeCategory: _activeCategory,
             radius: width * 0.07,
             crossAxisCount: 2,
             mainAxisSpacing: xPadding - 5,
@@ -215,6 +184,7 @@ class _MobileTabletView extends StatelessWidget {
             padding: xPadding,
             cardPadding: xPadding,
             isMobileView: true,
+            pagingController: _pagingController,
           ),
           const SizedBox(
             height: 5,
@@ -223,39 +193,13 @@ class _MobileTabletView extends StatelessWidget {
       ),
     );
   }
-}
 
-class _DekstopView extends StatelessWidget {
-  final ColorScheme colorScheme;
-  final double width;
-  final double topPadding;
-  final double xPadding;
-  final TextEditingController textEditingController;
-  final Function onSearch;
-  final bool isSearch;
-  final Function clearSearch;
-  final RefreshCallback pullRefresh;
-  final Future<List<Fashion>> futureFasion;
-  final Function(String) updateActiveCategory;
-  final String activeCategory;
-
-  const _DekstopView({
-    required this.colorScheme,
-    required this.width,
-    required this.topPadding,
-    required this.xPadding,
-    required this.textEditingController,
-    required this.onSearch,
-    required this.isSearch,
-    required this.clearSearch,
-    required this.pullRefresh,
-    required this.futureFasion,
-    required this.updateActiveCategory,
-    required this.activeCategory,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _dekstopView(
+    ColorScheme colorScheme,
+    double topPadding,
+    double xPadding,
+    double width,
+  ) {
     return Center(
       child: SingleChildScrollView(
         child: Container(
@@ -291,23 +235,23 @@ class _DekstopView extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.all(7),
                       child: TextField(
-                        controller: textEditingController,
-                        onSubmitted: (value) => onSearch(),
+                        controller: _textEditingController,
+                        onSubmitted: (value) => _onSearch(),
                         decoration: InputDecoration(
                           hintText: 'Search your needs',
                           contentPadding: const EdgeInsets.all(16),
                           suffixIcon: IconButton(
                             onPressed: () {
-                              if (isSearch) {
-                                onSearch();
+                              if (_isSearch) {
+                                _onSearch();
                               } else {
-                                clearSearch();
+                                _clearSearch();
                               }
                             },
                             icon: IconTheme(
                               data: customIconThemeData,
                               child: Icon(
-                                textEditingController.text.isEmpty
+                                _textEditingController.text.isEmpty
                                     ? Icons.search_outlined
                                     : Icons.highlight_remove_outlined,
                               ),
@@ -324,10 +268,8 @@ class _DekstopView extends StatelessWidget {
                 height: 28,
               ),
               FashionGridView(
-                pullRefresh: pullRefresh,
-                futureFasion: futureFasion,
-                updateActiveCategory: updateActiveCategory,
-                activeCategory: activeCategory,
+                updateActiveCategory: _updateActiveCategory,
+                activeCategory: _activeCategory,
                 radius: 7,
                 crossAxisCount: 4,
                 mainAxisSpacing: 7,
@@ -336,6 +278,7 @@ class _DekstopView extends StatelessWidget {
                 padding: 28,
                 cardPadding: 7,
                 isMobileView: false,
+                pagingController: _pagingController,
                 boxShadow: <BoxShadow>[
                   BoxShadow(
                     blurRadius: 8,

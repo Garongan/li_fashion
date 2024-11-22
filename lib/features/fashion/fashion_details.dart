@@ -224,16 +224,12 @@ class _FashionDetailsState extends State<FashionDetails> {
                 topRight: Radius.circular(width * 0.07),
               ),
             ),
-            child: Column(
-              children: <Widget>[
-                ButtonComponent(
-                  text: 'Checkout',
-                  foregroundColor: const Color(0xff000000),
-                  backgroundColor: colorScheme.primary,
-                  radius: width * 0.07,
-                  onPressed: () => _openShopee(widget.fashion.link),
-                ),
-              ],
+            child: ButtonComponent(
+              text: 'Checkout',
+              foregroundColor: const Color(0xff000000),
+              backgroundColor: colorScheme.primary,
+              radius: width * 0.07,
+              onPressed: () => _openShopee(widget.fashion.link),
             ),
           ),
         ],

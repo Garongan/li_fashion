@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:li_fashion/features/fashion/fashion.dart';
 import 'package:li_fashion/features/fashion/fashion_details.dart';
 import 'package:li_fashion/shared/components/category_list_component.dart';
@@ -7,8 +7,6 @@ import 'package:li_fashion/shared/components/favorite_button_component.dart';
 import 'package:li_fashion/shared/components/image_component.dart';
 
 class FashionGridView extends StatelessWidget {
-  final Future<List<Fashion>> futureFasion;
-  final RefreshCallback pullRefresh;
   final Function(String) updateActiveCategory;
   final String activeCategory;
   final double radius;
@@ -20,10 +18,9 @@ class FashionGridView extends StatelessWidget {
   final double padding;
   final double cardPadding;
   final bool isMobileView;
+  final PagingController<int, Fashion> pagingController;
   const FashionGridView({
     super.key,
-    required this.pullRefresh,
-    required this.futureFasion,
     required this.updateActiveCategory,
     required this.activeCategory,
     required this.radius,
@@ -35,6 +32,7 @@ class FashionGridView extends StatelessWidget {
     required this.padding,
     required this.cardPadding,
     required this.isMobileView,
+    required this.pagingController,
   });
 
   @override
@@ -91,125 +89,102 @@ class FashionGridView extends StatelessWidget {
             ),
             Expanded(
               child: RefreshIndicator(
-                onRefresh: pullRefresh,
+                onRefresh: () async => pagingController.refresh(),
                 color: colorScheme.onSurface,
-                child: FutureBuilder(
-                  future: futureFasion,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: colorScheme.onSurface,
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return const Center(
-                        child: Text('Failed to fetch data'),
-                      );
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                        child: Text('No data avaible'),
-                      );
-                    } else {
-                      return MasonryGridView.count(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(0),
-                        crossAxisCount: crossAxisCount,
-                        itemCount: snapshot.data!.length,
-                        mainAxisSpacing: mainAxisSpacing,
-                        crossAxisSpacing: crossAxisSpacing,
-                        itemBuilder: (context, index) {
-                          final Fashion fashion = snapshot.data![index];
-                          final id = '${fashion.name}_${fashion.price}';
-                          return Container(
-                            decoration: BoxDecoration(
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                  blurRadius: 2,
-                                  color: colorScheme.onSurface.withAlpha(100),
-                                  offset: const Offset(1, 1),
+                child: PagedMasonryGridView<int, Fashion>.count(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: crossAxisSpacing,
+                  mainAxisSpacing: mainAxisSpacing,
+                  pagingController: pagingController,
+                  builderDelegate: PagedChildBuilderDelegate(
+                      animateTransitions: true,
+                      itemBuilder: (context, item, index) {
+                        final Fashion fashion = item;
+                        final id = '${fashion.name}_${fashion.price}';
+                        return Container(
+                          decoration: BoxDecoration(
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                blurRadius: 2,
+                                color: colorScheme.onSurface.withAlpha(100),
+                                offset: const Offset(1, 1),
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(
+                              radius,
+                            ),
+                            color: colorScheme.surface,
+                          ),
+                          margin: const EdgeInsets.only(
+                            left: 1,
+                            right: 1,
+                            bottom: 5,
+                          ),
+                          child: InkWell(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FashionDetails(
+                                    id: id,
+                                    fashion: fashion,
+                                  ),
+                                ),
+                              );
+
+                              pagingController.refresh();
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Stack(
+                                  children: <Widget>[
+                                    ImageComponent(
+                                      image: fashion.image[0],
+                                      isDetail: false,
+                                      height: 200,
+                                      radius: radius,
+                                    ),
+                                    Positioned(
+                                      top: 7,
+                                      right: 7,
+                                      child: FavoriteButtonComponent(
+                                        id: id,
+                                        padding: 0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: cardPadding / 2,
+                                    horizontal: cardPadding,
+                                  ),
+                                  child: Text(
+                                    fashion.name,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    left: cardPadding,
+                                    right: cardPadding,
+                                    bottom: cardPadding,
+                                  ),
+                                  child: Text(
+                                    fashion.price,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
                                 ),
                               ],
-                              borderRadius: BorderRadius.circular(
-                                radius,
-                              ),
-                              color: colorScheme.surface,
                             ),
-                            margin: const EdgeInsets.only(
-                              left: 1,
-                              right: 1,
-                              bottom: 5,
-                            ),
-                            child: InkWell(
-                              onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => FashionDetails(
-                                      id: id,
-                                      fashion: fashion,
-                                    ),
-                                  ),
-                                );
-
-                                pullRefresh();
-                              },
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Stack(
-                                    children: <Widget>[
-                                      ImageComponent(
-                                        image: fashion.image[0],
-                                        isDetail: false,
-                                        height: 200,
-                                        radius: radius,
-                                      ),
-                                      Positioned(
-                                        top: 7,
-                                        right: 7,
-                                        child: FavoriteButtonComponent(
-                                          id: id,
-                                          padding: 0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: cardPadding / 2,
-                                      horizontal: cardPadding,
-                                    ),
-                                    child: Text(
-                                      fashion.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: cardPadding,
-                                      right: cardPadding,
-                                      bottom: cardPadding,
-                                    ),
-                                    child: Text(
-                                      fashion.price,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  },
+                          ),
+                        );
+                      }),
                 ),
               ),
             ),
@@ -249,126 +224,100 @@ class FashionGridView extends StatelessWidget {
             height: xPadding,
           ),
           RefreshIndicator(
-            onRefresh: pullRefresh,
+            onRefresh: () async => pagingController.refresh(),
             color: colorScheme.onSurface,
-            child: FutureBuilder(
-              future: futureFasion,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: colorScheme.onSurface,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Failed to fetch data'),
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text('No data avaible'),
-                  );
-                } else {
-                  return MasonryGridView.count(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0),
-                    crossAxisCount: crossAxisCount,
-                    itemCount: snapshot.data!.length,
-                    mainAxisSpacing: mainAxisSpacing,
-                    crossAxisSpacing: crossAxisSpacing,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final Fashion fashion = snapshot.data![index];
-                      final id = '${fashion.name}_${fashion.price}';
-                      return Container(
-                        decoration: BoxDecoration(
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                              blurRadius: 2,
-                              color: colorScheme.onSurface.withAlpha(100),
-                              offset: const Offset(1, 1),
+            child: PagedMasonryGridView<int, Fashion>.count(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: crossAxisSpacing,
+              mainAxisSpacing: mainAxisSpacing,
+              pagingController: pagingController,
+              builderDelegate: PagedChildBuilderDelegate(
+                  animateTransitions: true,
+                  itemBuilder: (context, item, index) {
+                    final Fashion fashion = item;
+                    final id = '${fashion.name}_${fashion.price}';
+                    return Container(
+                      decoration: BoxDecoration(
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            blurRadius: 2,
+                            color: colorScheme.onSurface.withAlpha(100),
+                            offset: const Offset(1, 1),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(
+                          radius,
+                        ),
+                        color: colorScheme.surface,
+                      ),
+                      margin: const EdgeInsets.only(
+                        left: 1,
+                        right: 1,
+                        bottom: 5,
+                      ),
+                      child: InkWell(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FashionDetails(
+                                id: id,
+                                fashion: fashion,
+                              ),
+                            ),
+                          );
+
+                          pagingController.refresh();
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              children: <Widget>[
+                                ImageComponent(
+                                  image: fashion.image[0],
+                                  isDetail: false,
+                                  height: 200,
+                                  radius: radius,
+                                ),
+                                Positioned(
+                                  top: 7,
+                                  right: 7,
+                                  child: FavoriteButtonComponent(
+                                    id: id,
+                                    padding: 0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: cardPadding / 2,
+                                horizontal: cardPadding,
+                              ),
+                              child: Text(
+                                fashion.name,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: cardPadding,
+                                right: cardPadding,
+                                bottom: cardPadding,
+                              ),
+                              child: Text(
+                                fashion.price,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
                             ),
                           ],
-                          borderRadius: BorderRadius.circular(
-                            radius,
-                          ),
-                          color: colorScheme.surface,
                         ),
-                        margin: const EdgeInsets.only(
-                          left: 1,
-                          right: 1,
-                          bottom: 5,
-                        ),
-                        child: InkWell(
-                          onTap: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FashionDetails(
-                                  id: id,
-                                  fashion: fashion,
-                                ),
-                              ),
-                            );
-              
-                            pullRefresh();
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                children: <Widget>[
-                                  ImageComponent(
-                                    image: fashion.image[0],
-                                    isDetail: false,
-                                    height: 200,
-                                    radius: radius,
-                                  ),
-                                  Positioned(
-                                    top: 7,
-                                    right: 7,
-                                    child: FavoriteButtonComponent(
-                                      id: id,
-                                      padding: 0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: cardPadding / 2,
-                                  horizontal: cardPadding,
-                                ),
-                                child: Text(
-                                  fashion.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: cardPadding,
-                                  right: cardPadding,
-                                  bottom: cardPadding,
-                                ),
-                                child: Text(
-                                  fashion.price,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
+                      ),
+                    );
+                  }),
             ),
           ),
         ],

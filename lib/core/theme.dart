@@ -92,6 +92,7 @@ const InputDecorationTheme customInputDecorationTheme = InputDecorationTheme(
     letterSpacing: 0.1,
     color: Color(0xff000000),
   ),
+  
   border: InputBorder.none,
 );
 

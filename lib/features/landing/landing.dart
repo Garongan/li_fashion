@@ -54,7 +54,7 @@ class _MobileTabletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xff000000),
+      color: colorScheme.onSurface,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
@@ -95,51 +95,74 @@ class _MobileTabletView extends StatelessWidget {
             height: 5,
           ),
           Container(
+            padding: EdgeInsets.only(
+              top: xPadding,
+              left: xPadding,
+              right: xPadding,
+              bottom: bottomPadding + xPadding,
+            ),
             decoration: BoxDecoration(
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(width * 0.07),
-              color: colorScheme.primary,
             ),
-            alignment: Alignment.topCenter,
-            height: 100,
-            child: Marquee(
-              text: 'TRENDY COLLECTION',
-              style: const TextStyle(
-                fontSize: 60,
-                color: Color(0xff000000),
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.2,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(width * 0.07),
+                color: colorScheme.primary,
               ),
-              scrollAxis: Axis.horizontal,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              blankSpace: 20.0,
-              velocity: 50.0,
-              startPadding: 10.0,
-              accelerationDuration: const Duration(seconds: 1),
-              accelerationCurve: Curves.linear,
-              decelerationDuration: const Duration(milliseconds: 500),
-              decelerationCurve: Curves.easeOut,
+              alignment: Alignment.topCenter,
+              height: 100,
+              child: Marquee(
+                text: 'TRENDY COLLECTION',
+                style: const TextStyle(
+                  fontSize: 60,
+                  color: Color(0xff000000),
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.2,
+                ),
+                scrollAxis: Axis.horizontal,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                blankSpace: 20.0,
+                velocity: 50.0,
+                startPadding: 10.0,
+                accelerationDuration: const Duration(seconds: 1),
+                accelerationCurve: Curves.linear,
+                decelerationDuration: const Duration(milliseconds: 500),
+                decelerationCurve: Curves.easeOut,
+              ),
             ),
           ),
           const SizedBox(
             height: 5,
           ),
-          ButtonComponent(
-            bottomPadding: bottomPadding,
-            text: 'Discover Now',
-            foregroundColor: const Color(0xff000000),
-            backgroundColor: colorScheme.secondary,
-            radius: width * 0.07,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FashionList(),
-                ),
-              );
-            },
-          ),
-          const SizedBox(
-            height: 5,
+          Container(
+            padding: EdgeInsets.only(
+              top: xPadding,
+              left: xPadding,
+              right: xPadding,
+              bottom: bottomPadding + xPadding,
+            ),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(width * 0.07),
+                topRight: Radius.circular(width * 0.07),
+              ),
+            ),
+            child: ButtonComponent(
+              text: 'Discover Now',
+              foregroundColor: const Color(0xff000000),
+              backgroundColor: colorScheme.secondary,
+              radius: width * 0.07,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FashionList(),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

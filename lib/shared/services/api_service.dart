@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:li_fashion/features/fashion/fashion.dart';
-import 'package:li_fashion/shared/services/favorite_service.dart';
 
 class ApiService {
   final _apiKey = dotenv.env['API_KEY'];
@@ -23,9 +22,10 @@ class ApiService {
     }
   }
 
-  Future<List<Fashion>> _getFashionData() async {
+  Future<List<Fashion>> getFashionData(int pageKey, int size) async {
+    final range = 'Sheet1!A$pageKey:J${pageKey + size}';
     final url =
-        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/Sheet1?key=$_apiKey';
+        'https://sheets.googleapis.com/v4/spreadsheets/$_spreadsheetId/values/$range?key=$_apiKey';
 
     final response = await http.get(Uri.parse(url));
 
@@ -39,53 +39,5 @@ class ApiService {
     } else {
       throw Exception('Failed to load data');
     }
-  }
-
-  Future<List<Fashion>> getFilteredData(
-    List<Fashion>? fashions,
-    String category,
-    String search,
-  ) async {
-    fashions ??= await _getFashionData();
-    if (category == 'All' && search.isEmpty) {
-      return fashions;
-    }
-
-    if (category == 'All' && search.isNotEmpty) {
-      return fashions
-          .where((value) =>
-              value.name.toLowerCase().contains(search.toLowerCase()))
-          .toList();
-    }
-
-    if (search.isNotEmpty) {
-      return fashions
-          .where((value) =>
-              value.category.contains(category) &&
-              value.name.toLowerCase().contains(search.toLowerCase()))
-          .toList();
-    }
-
-    return fashions
-        .where((value) => value.category.contains(category))
-        .toList();
-  }
-
-  Future<List<Fashion>> getLovedFashionData(
-      String category, String search) async {
-    List<Fashion> fashions = await _getFashionData();
-    List<Fashion> lovedFashions = [];
-
-    final favoriteService = FavoriteService();
-
-    for (var value in fashions) {
-      final id = '${value.name}_${value.price}';
-      bool isLoved = await favoriteService.getLoved(id);
-      if (isLoved) {
-        lovedFashions.add(value);
-      }
-    }
-
-    return getFilteredData(lovedFashions, category, search);
   }
 }
